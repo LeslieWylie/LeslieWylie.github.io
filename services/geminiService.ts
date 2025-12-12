@@ -96,7 +96,7 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
         'Authorization': `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        model: "[满血伪流]gemini-2.5-pro", // 
+        model: "[满血Pro]gemini-2.5-pro", // 
         messages: [
           { role: "system", content: BAZI_SYSTEM_INSTRUCTION },
           { role: "user", content: userPrompt }
