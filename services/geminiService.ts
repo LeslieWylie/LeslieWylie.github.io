@@ -3,7 +3,7 @@ import { UserInput, LifeDestinyResult, Gender } from "../types";
 import { BAZI_SYSTEM_INSTRUCTION } from "../constants";
 
 // TODO: 请在此处填入您的 API KEY
-const API_KEY = "AIzaSyB443oIg3LmEC9HYCWuU0AAV5x4G1Oq5Dw"; 
+const API_KEY = "sk-3HssDxJsDxegHghgNSrUpvEnLF6zL3wGqJZayr1ynNN9T9lb"; 
 
 // Schema definition for the expected JSON response
 const chartPointSchema: Schema = {
@@ -156,7 +156,7 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-pro", 
+      model: "gemini-3-pro-preview", 
       contents: prompt,
       config: {
         systemInstruction: BAZI_SYSTEM_INSTRUCTION,
