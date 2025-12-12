@@ -1,0 +1,5 @@
+{
+  "name": "Life K-Line - Bazi Destiny Chart",
+  "description": "A React application that visualizes a user's life destiny as a stock market K-line chart based on traditional Chinese BaZi (Eight Characters) astrology, powered by Gemini.",
+  "requestFramePermissions": []
+}
