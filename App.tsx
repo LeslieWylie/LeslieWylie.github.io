@@ -41,7 +41,7 @@ const App: React.FC = () => {
             </div>
           </div>
           <div className="hidden md:block text-sm text-gray-400">
-             基于 Gemini 3 Pro 模型驱动
+             基于 Gemini 2.5 Pro 模型驱动
           </div>
         </div>
       </header>
@@ -98,7 +98,7 @@ const App: React.FC = () => {
               <p className="text-sm text-gray-500 mb-2">
                 <span className="text-green-600 font-bold">绿色K线</span> 代表运势上涨（吉），
                 <span className="text-red-600 font-bold">红色K线</span> 代表运势下跌（凶）。
-                (采用美股K线颜色规则)
+                (点击K线查看流年详批)
               </p>
               <LifeKLineChart data={result.chartData} />
             </section>
@@ -114,7 +114,7 @@ const App: React.FC = () => {
       {/* Footer */}
       <footer className="w-full bg-gray-900 text-gray-400 py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-4 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} 人生K线项目 | 仅供娱乐与文化研究，请勿迷信</p>
+          <p>&copy; {new Date().getFullYear()} 人生K线项目 推特@0xsakura666 | 仅供娱乐与文化研究，请勿迷信</p>
         </div>
       </footer>
     </div>
