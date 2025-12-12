@@ -1,69 +1,9 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { UserInput, LifeDestinyResult, Gender } from "../types";
 import { BAZI_SYSTEM_INSTRUCTION } from "../constants";
 
-// TODO: 请在此处填入您的 API KEY
+// TODO: 请将您的 OpenAI 格式密钥填入此处
 const API_KEY = "sk-3HssDxJsDxegHghgNSrUpvEnLF6zL3wGqJZayr1ynNN9T9lb"; 
-
-// Schema definition for the expected JSON response
-const chartPointSchema: Schema = {
-  type: Type.OBJECT,
-  properties: {
-    age: { type: Type.INTEGER },
-    year: { type: Type.INTEGER },
-    daYun: { type: Type.STRING, description: "The MAJOR 10-YEAR PILLAR name. MUST remain constant for 10 years." },
-    ganZhi: { type: Type.STRING, description: "The ANNUAL Flow Year Pillar (流年干支) for this specific year." },
-    open: { type: Type.NUMBER },
-    close: { type: Type.NUMBER },
-    high: { type: Type.NUMBER },
-    low: { type: Type.NUMBER },
-    score: { type: Type.NUMBER },
-    reason: { type: Type.STRING, description: "Detailed detailed forecast for this specific year" },
-  },
-  required: ["age", "year", "daYun", "ganZhi", "open", "close", "high", "low", "reason"],
-};
-
-const analysisSchema: Schema = {
-  type: Type.OBJECT,
-  properties: {
-    bazi: { 
-      type: Type.ARRAY, 
-      items: { type: Type.STRING } 
-    },
-    summary: { type: Type.STRING },
-    summaryScore: { type: Type.INTEGER },
-    
-    industry: { type: Type.STRING },
-    industryScore: { type: Type.INTEGER },
-    
-    wealth: { type: Type.STRING },
-    wealthScore: { type: Type.INTEGER },
-    
-    marriage: { type: Type.STRING },
-    marriageScore: { type: Type.INTEGER },
-    
-    health: { type: Type.STRING },
-    healthScore: { type: Type.INTEGER },
-    
-    family: { type: Type.STRING },
-    familyScore: { type: Type.INTEGER },
-    
-    chartPoints: {
-      type: Type.ARRAY,
-      items: chartPointSchema,
-    },
-  },
-  required: [
-    "bazi", 
-    "summary", "summaryScore",
-    "industry", "industryScore",
-    "wealth", "wealthScore",
-    "marriage", "marriageScore",
-    "health", "healthScore",
-    "family", "familyScore",
-    "chartPoints"
-  ],
-};
+const API_BASE_URL = "https://max.openai365.top/v1";
 
 // Helper to determine stem polarity
 const getStemPolarity = (pillar: string): 'YANG' | 'YIN' => {
@@ -79,20 +19,15 @@ const getStemPolarity = (pillar: string): 'YANG' | 'YIN' => {
 
 export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestinyResult> => {
   
-  if (!API_KEY || API_KEY.includes("在这里填入")) {
-    console.error("Config Error: API_KEY not set in geminiService.ts");
-    throw new Error("请在 services/geminiService.ts 文件中填入您的 API KEY。");
+  // 简单检查 Key 是否已替换
+  if (!API_KEY || API_KEY.includes("YOUR_API_KEY_HERE")) {
+    console.warn("警告: API Key 尚未设置，请在 services/geminiService.ts 中填入密钥。");
   }
-
-  const ai = new GoogleGenAI({ apiKey: API_KEY });
 
   const genderStr = input.gender === Gender.MALE ? '男 (乾造)' : '女 (坤造)';
   const startAgeInt = parseInt(input.startAge) || 1;
   
   // Calculate Da Yun Direction accurately
-  // Rule: 
-  // - Yang Year Male OR Yin Year Female -> Forward (顺行)
-  // - Yin Year Male OR Yang Year Female -> Backward (逆行)
   const yearStemPolarity = getStemPolarity(input.yearPillar);
   let isForward = false;
 
@@ -103,13 +38,12 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
   }
 
   const daYunDirectionStr = isForward ? '顺行 (Forward)' : '逆行 (Backward)';
-
-  // Explicit calculation example for the prompt to ensure model understands
+  
   const directionExample = isForward 
     ? "例如：第一步是【戊申】，第二步则是【己酉】（顺排）" 
     : "例如：第一步是【戊申】，第二步则是【丁未】（逆排）";
 
-  const prompt = `
+  const userPrompt = `
     请根据以下**已经排好的**八字四柱和**指定的大运信息**进行分析。
     
     【基本信息】
@@ -155,44 +89,63 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
   `;
 
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-pro-preview", 
-      contents: prompt,
-      config: {
-        systemInstruction: BAZI_SYSTEM_INSTRUCTION,
-        responseMimeType: "application/json",
-        responseSchema: analysisSchema,
-        thinkingConfig: { thinkingBudget: 16384 },
+    const response = await fetch(`${API_BASE_URL}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_KEY}`
       },
+      body: JSON.stringify({
+        model: "gemini-3-pro-preview", // 
+        messages: [
+          { role: "system", content: BAZI_SYSTEM_INSTRUCTION },
+          { role: "user", content: userPrompt }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.7
+      })
     });
 
-    const text = response.text;
-    if (!text) {
-      throw new Error("模型未返回数据。");
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`API 请求失败: ${response.status} - ${errText}`);
     }
 
-    const data = JSON.parse(text);
+    const jsonResult = await response.json();
+    const content = jsonResult.choices?.[0]?.message?.content;
+
+    if (!content) {
+      throw new Error("模型未返回任何内容。");
+    }
+
+    // 解析 JSON
+    const data = JSON.parse(content);
+
+    // 简单校验数据完整性
+    if (!data.chartPoints || !Array.isArray(data.chartPoints)) {
+      throw new Error("模型返回的数据格式不正确（缺失 chartPoints）。");
+    }
 
     return {
       chartData: data.chartPoints,
       analysis: {
-        bazi: data.bazi,
-        summary: data.summary,
-        summaryScore: data.summaryScore,
-        industry: data.industry,
-        industryScore: data.industryScore,
-        wealth: data.wealth,
-        wealthScore: data.wealthScore,
-        marriage: data.marriage,
-        marriageScore: data.marriageScore,
-        health: data.health,
-        healthScore: data.healthScore,
-        family: data.family,
-        familyScore: data.familyScore,
+        bazi: data.bazi || [],
+        summary: data.summary || "无摘要",
+        summaryScore: data.summaryScore || 5,
+        industry: data.industry || "无",
+        industryScore: data.industryScore || 5,
+        wealth: data.wealth || "无",
+        wealthScore: data.wealthScore || 5,
+        marriage: data.marriage || "无",
+        marriageScore: data.marriageScore || 5,
+        health: data.health || "无",
+        healthScore: data.healthScore || 5,
+        family: data.family || "无",
+        familyScore: data.familyScore || 5,
       },
     };
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    console.error("Gemini/OpenAI API Error:", error);
     throw error;
   }
 };
