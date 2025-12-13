@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { AnalysisData } from '../types';
-import { ScrollText, Briefcase, Coins, Heart, Activity, Users, Star } from 'lucide-react';
+import { ScrollText, Briefcase, Coins, Heart, Activity, Users, Star, Info } from 'lucide-react';
 
 interface AnalysisResultProps {
   analysis: AnalysisData;
@@ -38,11 +39,15 @@ const Card = ({ title, icon: Icon, content, score, colorClass }: any) => (
       </div>
       <Star className="w-4 h-4 opacity-50" />
     </div>
-    <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap flex-grow">{content}</p>
-    <div className="pt-4 mt-2 border-t border-gray-50">
-      <div className="text-xs text-gray-400 font-medium mb-1 uppercase tracking-wider">Rating</div>
-      <ScoreBar score={score} />
+    <div className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap flex-grow">
+      {content}
     </div>
+    {typeof score === 'number' && (
+      <div className="pt-4 mt-2 border-t border-gray-50">
+        <div className="text-xs text-gray-400 font-medium mb-1 uppercase tracking-wider">Rating</div>
+        <ScoreBar score={score} />
+      </div>
+    )}
   </div>
 );
 
@@ -113,9 +118,43 @@ const AnalysisResult: React.FC<AnalysisResultProps> = ({ analysis }) => {
           score={analysis.familyScore}
           colorClass="text-purple-600" 
         />
+        
+        {/* Static Score Explanation Card */}
+        <Card
+          title="评分讲解"
+          icon={Info}
+          colorClass="text-gray-600"
+          content={
+            <div className="space-y-4">
+              <ul className="space-y-1.5 font-mono text-xs md:text-sm">
+                <li className="flex justify-between items-center border-b border-gray-100 pb-1">
+                  <span>0-2分</span> 
+                  <span className="text-xs px-2 py-0.5 bg-red-100 text-red-600 rounded font-bold">极差</span>
+                </li>
+                <li className="flex justify-between items-center border-b border-gray-100 pb-1">
+                  <span>3-4分</span> 
+                  <span className="text-xs px-2 py-0.5 bg-orange-100 text-orange-600 rounded font-bold">差</span>
+                </li>
+                <li className="flex justify-between items-center border-b border-gray-100 pb-1">
+                  <span>5-6分</span> 
+                  <span className="text-xs px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded font-bold">一般</span>
+                </li>
+                <li className="flex justify-between items-center border-b border-gray-100 pb-1">
+                  <span>7-8分</span> 
+                  <span className="text-xs px-2 py-0.5 bg-indigo-100 text-indigo-600 rounded font-bold">好</span>
+                </li>
+                <li className="flex justify-between items-center">
+                  <span>9-10分</span> 
+                  <span className="text-xs px-2 py-0.5 bg-green-100 text-green-600 rounded font-bold">极好</span>
+                </li>
+              </ul>
+              <p className="text-xs text-gray-400 italic leading-relaxed border-t border-gray-100 pt-2 text-justify">
+                注：命运还受环境和个人选择影响，八字趋势不能完全代表真实人生，命理学不是玄学，而是帮助我们在人生列车上做出更好选择的哲学工具。一命二运三风水 四积阴德五读书 六名七相八敬神 九遇贵人十养生。
+              </p>
+            </div>
+          }
+        />
       </div>
-
-      {/* Timeline removed as requested */}
     </div>
   );
 };
