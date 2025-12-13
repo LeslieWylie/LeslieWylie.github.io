@@ -91,7 +91,7 @@ const App: React.FC = () => {
 
                 {/* API Tutorial */}
                 <a 
-                  href="https://jcnjmxofi1yl.feishu.cn/wiki/G9Jcw7T3NiCg6ZkVY8Sc94dOn2d"
+                  href="https://jcnjmxofi1yl.feishu.cn/wiki/JX0iwzoeqie3GEkJ8XQcMesan3c"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 flex items-center justify-center gap-2 bg-white px-4 py-3 rounded-xl shadow-sm border border-emerald-100 hover:border-emerald-500 hover:shadow-md transition-all transform hover:-translate-y-0.5 group"
