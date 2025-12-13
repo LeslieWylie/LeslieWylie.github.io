@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import BaziForm from './components/BaziForm';
 import LifeKLineChart from './components/LifeKLineChart';
@@ -5,7 +6,7 @@ import AnalysisResult from './components/AnalysisResult';
 import { UserInput, LifeDestinyResult } from './types';
 import { generateLifeAnalysis } from './services/geminiService';
 import { API_STATUS } from './constants';
-import { Sparkles, AlertCircle, BookOpen, ArrowRight } from 'lucide-react';
+import { Sparkles, AlertCircle, BookOpen, Key } from 'lucide-react';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -73,22 +74,34 @@ const App: React.FC = () => {
                 助您发现人生牛市，规避风险熊市，把握关键转折点。
               </p>
 
-              {/* Large Tutorial Link */}
-              <a 
-                href="https://jcnjmxofi1yl.feishu.cn/wiki/OPa4woxiBiFP9okQ9yWcbcXpnEw"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-3 bg-white px-8 py-4 rounded-2xl shadow-md border-2 border-indigo-100 hover:border-indigo-500 hover:shadow-lg transition-all transform hover:-translate-y-1"
-              >
-                <div className="bg-indigo-100 p-2 rounded-full text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                  <BookOpen className="w-6 h-6" />
-                </div>
-                <div className="text-left">
-                  <div className="text-xl font-bold text-gray-800 group-hover:text-indigo-700 transition-colors">
-                    查看使用教程
+              {/* Tutorial Buttons Group */}
+              <div className="flex flex-row gap-4 w-full max-w-lg mb-4">
+                {/* Usage Tutorial */}
+                <a 
+                  href="https://jcnjmxofi1yl.feishu.cn/wiki/OPa4woxiBiFP9okQ9yWcbcXpnEw"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 bg-white px-4 py-3 rounded-xl shadow-sm border border-indigo-100 hover:border-indigo-500 hover:shadow-md transition-all transform hover:-translate-y-0.5 group"
+                >
+                  <div className="bg-indigo-50 p-1.5 rounded-full text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    <BookOpen className="w-4 h-4" />
                   </div>
-                </div>
-              </a>
+                  <span className="text-base font-bold text-gray-800 group-hover:text-indigo-700 transition-colors">使用教程</span>
+                </a>
+
+                {/* API Tutorial */}
+                <a 
+                  href="https://jcnjmxofi1yl.feishu.cn/wiki/G9Jcw7T3NiCg6ZkVY8Sc94dOn2d"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 bg-white px-4 py-3 rounded-xl shadow-sm border border-emerald-100 hover:border-emerald-500 hover:shadow-md transition-all transform hover:-translate-y-0.5 group"
+                >
+                  <div className="bg-emerald-50 p-1.5 rounded-full text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                    <Key className="w-4 h-4" />
+                  </div>
+                  <span className="text-base font-bold text-gray-800 group-hover:text-emerald-700 transition-colors">API教程</span>
+                </a>
+              </div>
             </div>
             
             <BaziForm onSubmit={handleFormSubmit} isLoading={loading} />

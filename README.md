@@ -1,3 +1,20 @@
-Gemini 3 pro开发
-作者 推特@0xsakura666 欢迎私信交流
-使用的是gemini中转API，不是官方的，我部署的网站API有限额，想自己部署的可以去闲鱼买gemini的中转API
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
+
+# Run and deploy your AI Studio app
+
+This contains everything you need to run your app locally.
+
+View your app in AI Studio: https://ai.studio/apps/drive/1xnHGwKAn5L8f0wAqqvK3LNs9_gJDI2LX
+
+## Run Locally
+
+**Prerequisites:**  Node.js
+
+
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

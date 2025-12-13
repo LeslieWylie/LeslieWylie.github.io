@@ -1,3 +1,4 @@
+
 export enum Gender {
   MALE = 'Male',
   FEMALE = 'Female',
@@ -13,6 +14,10 @@ export interface UserInput {
   hourPillar: string;  // 时柱
   startAge: string;    // 起运年龄 (虚岁) - Changed to string to handle input field state easily, parse later
   firstDaYun: string;  // 第一步大运干支
+  
+  // New API Configuration Fields
+  apiBaseUrl: string;
+  apiKey: string;
 }
 
 export interface KLinePoint {

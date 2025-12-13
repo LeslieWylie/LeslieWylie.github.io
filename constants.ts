@@ -62,4 +62,4 @@ export const BAZI_SYSTEM_INSTRUCTION = `
 // 1: 正常服务 (Normal)
 // 0: 服务器繁忙/维护 (Busy/Maintenance)
 // Fix: Explicitly type API_STATUS as number to allow comparison with 0 in App.tsx
-export const API_STATUS: number = 0;
+export const API_STATUS: number = 1;
