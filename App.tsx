@@ -87,9 +87,6 @@ const App: React.FC = () => {
                   <div className="text-xl font-bold text-gray-800 group-hover:text-indigo-700 transition-colors">
                     查看使用教程
                   </div>
-                  <div className="text-xs text-gray-400 font-medium group-hover:text-indigo-400">
-                    新手必读指南 →
-                  </div>
                 </div>
               </a>
             </div>
