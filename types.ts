@@ -16,6 +16,7 @@ export interface UserInput {
   firstDaYun: string;  // 第一步大运干支
   
   // New API Configuration Fields
+  modelName: string;   // 使用的模型名称
   apiBaseUrl: string;
   apiKey: string;
 }
