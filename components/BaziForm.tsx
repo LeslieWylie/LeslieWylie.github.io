@@ -1,6 +1,7 @@
+
 import React, { useState, useMemo } from 'react';
 import { UserInput, Gender } from '../types';
-import { Loader2, Sparkles, AlertCircle, TrendingUp } from 'lucide-react';
+import { Loader2, Sparkles, AlertCircle, TrendingUp, Settings } from 'lucide-react';
 
 interface BaziFormProps {
   onSubmit: (data: UserInput) => void;
@@ -18,15 +19,38 @@ const BaziForm: React.FC<BaziFormProps> = ({ onSubmit, isLoading }) => {
     hourPillar: '',
     startAge: '',
     firstDaYun: '',
+    apiBaseUrl: 'https://max.openai365.top/v1',
+    apiKey: '',
   });
+
+  const [formErrors, setFormErrors] = useState<{apiBaseUrl?: string, apiKey?: string}>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear error when user types
+    if (name === 'apiBaseUrl' || name === 'apiKey') {
+      setFormErrors(prev => ({ ...prev, [name]: undefined }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate API Config
+    const errors: {apiBaseUrl?: string, apiKey?: string} = {};
+    if (!formData.apiBaseUrl.trim()) {
+      errors.apiBaseUrl = '请输入 API Base URL';
+    }
+    if (!formData.apiKey.trim()) {
+      errors.apiKey = '请输入 API Key';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     onSubmit(formData);
   };
 
@@ -59,6 +83,41 @@ const BaziForm: React.FC<BaziFormProps> = ({ onSubmit, isLoading }) => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        
+        {/* API Configuration Section */}
+        <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+          <div className="flex items-center gap-2 mb-3 text-gray-700 text-sm font-bold">
+            <Settings className="w-4 h-4" />
+            <span>模型接口设置 (必填)</span>
+          </div>
+          <div className="space-y-3">
+             <div>
+               <label className="block text-xs font-bold text-gray-600 mb-1">API Base URL</label>
+               <input
+                  type="text"
+                  name="apiBaseUrl"
+                  value={formData.apiBaseUrl}
+                  onChange={handleChange}
+                  placeholder="https://max.openai365.top/v1"
+                  className={`w-full px-3 py-2 border rounded-lg text-xs font-mono outline-none ${formErrors.apiBaseUrl ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:ring-2 focus:ring-gray-400'}`}
+                />
+                {formErrors.apiBaseUrl && <p className="text-red-500 text-xs mt-1">{formErrors.apiBaseUrl}</p>}
+             </div>
+             <div>
+               <label className="block text-xs font-bold text-gray-600 mb-1">API Key</label>
+               <input
+                  type="password"
+                  name="apiKey"
+                  value={formData.apiKey}
+                  onChange={handleChange}
+                  placeholder="sk-..."
+                  className={`w-full px-3 py-2 border rounded-lg text-xs font-mono outline-none ${formErrors.apiKey ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:ring-2 focus:ring-gray-400'}`}
+                />
+                {formErrors.apiKey && <p className="text-red-500 text-xs mt-1">{formErrors.apiKey}</p>}
+             </div>
+          </div>
+        </div>
+
         {/* Name & Gender */}
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -229,7 +288,7 @@ const BaziForm: React.FC<BaziFormProps> = ({ onSubmit, isLoading }) => {
           ) : (
             <>
               <Sparkles className="h-5 w-5 text-amber-300" />
-              <span>生成人生K线</span>
+              <span>开始生成人生K线</span>
             </>
           )}
         </button>
