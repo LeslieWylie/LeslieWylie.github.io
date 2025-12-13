@@ -1,9 +1,6 @@
+
 import { UserInput, LifeDestinyResult, Gender } from "../types";
 import { BAZI_SYSTEM_INSTRUCTION } from "../constants";
-
-// TODO: 请将您的 OpenAI 格式密钥填入此处
-const API_KEY = "sk-UnpzkQCEqt3xRSs0FjzxkYKt8SULkjHTGviSoXsHtm0YHtTx"; 
-const API_BASE_URL = "https://max.openai365.top/v1";
 
 // Helper to determine stem polarity
 const getStemPolarity = (pillar: string): 'YANG' | 'YIN' => {
@@ -19,10 +16,17 @@ const getStemPolarity = (pillar: string): 'YANG' | 'YIN' => {
 
 export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestinyResult> => {
   
-  // 简单检查 Key 是否已替换
-  if (!API_KEY || API_KEY.includes("YOUR_API_KEY_HERE")) {
-    console.warn("警告: API Key 尚未设置，请在 services/geminiService.ts 中填入密钥。");
+  const { apiKey, apiBaseUrl } = input;
+
+  if (!apiKey || !apiKey.trim()) {
+    throw new Error("请在表单中填写有效的 API Key");
   }
+  if (!apiBaseUrl || !apiBaseUrl.trim()) {
+    throw new Error("请在表单中填写有效的 API Base URL");
+  }
+
+  // Remove trailing slash if present
+  const cleanBaseUrl = apiBaseUrl.replace(/\/+$/, "");
 
   const genderStr = input.gender === Gender.MALE ? '男 (乾造)' : '女 (坤造)';
   const startAgeInt = parseInt(input.startAge) || 1;
@@ -89,14 +93,14 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
   `;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/chat/completions`, {
+    const response = await fetch(`${cleanBaseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: "gemini-3-pro-preview", // 
+        model: "gemini-2.5-flash", 
         messages: [
           { role: "system", content: BAZI_SYSTEM_INSTRUCTION },
           { role: "user", content: userPrompt }
