@@ -12,6 +12,7 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<LifeDestinyResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>('');
 
   const handleFormSubmit = async (data: UserInput) => {
     // 检查系统状态
@@ -24,6 +25,7 @@ const App: React.FC = () => {
     setLoading(true);
     setError(null);
     setResult(null);
+    setUserName(data.name || '');
 
     try {
       const analysis = await generateLifeAnalysis(data);
@@ -51,7 +53,7 @@ const App: React.FC = () => {
           </div>
           <div className="flex items-center gap-6">
             <div className="hidden md:block text-sm text-gray-400 font-medium bg-gray-100 px-3 py-1 rounded-full">
-               基于 AI 大模型驱动
+               基于 AI 大模型驱动 推特@0xSakura666
             </div>
           </div>
         </div>
@@ -69,8 +71,8 @@ const App: React.FC = () => {
                 <span className="text-indigo-600">预见人生轨迹</span>
               </h2>
               <p className="text-gray-600 text-lg leading-relaxed mb-8">
-                结合传统<strong>八字命理</strong>与现代金融数据可视化，
-                我们将您的一生运势绘制成类似股票行情的K线图。
+                结合<strong>传统八字命理</strong>与<strong>金融可视化技术</strong>
+                将您的一生运势绘制成类似股票行情的K线图。
                 助您发现人生牛市，规避风险熊市，把握关键转折点。
               </p>
 
@@ -120,7 +122,9 @@ const App: React.FC = () => {
           <div className="animate-fade-in space-y-12">
             
             <div className="flex justify-between items-center border-b pb-4">
-               <h2 className="text-2xl font-bold font-serif-sc text-gray-800">命盘分析报告</h2>
+               <h2 className="text-2xl font-bold font-serif-sc text-gray-800">
+                 {userName ? `${userName}的` : ''}命盘分析报告
+               </h2>
                <button 
                  onClick={() => setResult(null)}
                  className="text-indigo-600 hover:text-indigo-800 font-medium text-sm"
@@ -133,7 +137,7 @@ const App: React.FC = () => {
             <section className="space-y-4">
               <h3 className="text-xl font-bold text-gray-700 flex items-center gap-2">
                  <span className="w-1 h-6 bg-indigo-600 rounded-full"></span>
-                 百岁流年走势图 (100年)
+                 流年大运走势图 (100年)
               </h3>
               <p className="text-sm text-gray-500 mb-2">
                 <span className="text-green-600 font-bold">绿色K线</span> 代表运势上涨（吉），
@@ -154,7 +158,7 @@ const App: React.FC = () => {
       {/* Footer */}
       <footer className="w-full bg-gray-900 text-gray-400 py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-4 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} 人生K线项目 推特@0xsakura666 | 仅供娱乐与文化研究，请勿迷信</p>
+          <p>&copy; {new Date().getFullYear()} 人生K线项目 推特@0xSakura666 | 仅供娱乐与文化研究，请勿迷信</p>
         </div>
       </footer>
     </div>
