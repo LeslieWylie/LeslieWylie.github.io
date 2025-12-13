@@ -19,17 +19,18 @@ const BaziForm: React.FC<BaziFormProps> = ({ onSubmit, isLoading }) => {
     hourPillar: '',
     startAge: '',
     firstDaYun: '',
+    modelName: 'gemini-3-pro-preview',
     apiBaseUrl: 'https://max.openai365.top/v1',
     apiKey: '',
   });
 
-  const [formErrors, setFormErrors] = useState<{apiBaseUrl?: string, apiKey?: string}>({});
+  const [formErrors, setFormErrors] = useState<{modelName?: string, apiBaseUrl?: string, apiKey?: string}>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     // Clear error when user types
-    if (name === 'apiBaseUrl' || name === 'apiKey') {
+    if (name === 'apiBaseUrl' || name === 'apiKey' || name === 'modelName') {
       setFormErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
@@ -38,7 +39,10 @@ const BaziForm: React.FC<BaziFormProps> = ({ onSubmit, isLoading }) => {
     e.preventDefault();
     
     // Validate API Config
-    const errors: {apiBaseUrl?: string, apiKey?: string} = {};
+    const errors: {modelName?: string, apiBaseUrl?: string, apiKey?: string} = {};
+    if (!formData.modelName.trim()) {
+      errors.modelName = '请输入模型名称';
+    }
     if (!formData.apiBaseUrl.trim()) {
       errors.apiBaseUrl = '请输入 API Base URL';
     }
@@ -248,6 +252,18 @@ const BaziForm: React.FC<BaziFormProps> = ({ onSubmit, isLoading }) => {
             <span>模型接口设置 (必填)</span>
           </div>
           <div className="space-y-3">
+             <div>
+               <label className="block text-xs font-bold text-gray-600 mb-1">使用模型</label>
+               <input
+                  type="text"
+                  name="modelName"
+                  value={formData.modelName}
+                  onChange={handleChange}
+                  placeholder="gemini-3-pro-preview"
+                  className={`w-full px-3 py-2 border rounded-lg text-xs font-mono outline-none ${formErrors.modelName ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:ring-2 focus:ring-gray-400'}`}
+                />
+                {formErrors.modelName && <p className="text-red-500 text-xs mt-1">{formErrors.modelName}</p>}
+             </div>
              <div>
                <label className="block text-xs font-bold text-gray-600 mb-1">API Base URL</label>
                <input
