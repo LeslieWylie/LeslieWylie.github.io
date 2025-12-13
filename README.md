@@ -1,20 +1,6 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
-
-# Run and deploy your AI Studio app
-
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/drive/1xnHGwKAn5L8f0wAqqvK3LNs9_gJDI2LX
-
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+推特@0xsakura666  
+基于gemini3pro和传统八字命理，可以将人生的运势趋势以k线的形式展现出来。  
+预计准确率可以吊打全网90%的网络大师，和我自己算的差距不大。  
+需自行填写中转API KEY    
+设置教程https://jcnjmxofi1yl.feishu.cn/wiki/JX0iwzoeqie3GEkJ8XQcMesan3c  
+使用教程https://jcnjmxofi1yl.feishu.cn/wiki/OPa4woxiBiFP9okQ9yWcbcXpnEw  
