@@ -67,7 +67,7 @@ const App: React.FC = () => {
 
               {/* Large Tutorial Link */}
               <a 
-                href="https://lsgljam25eq6.sg.larksuite.com/wiki/TVWLw1I9yiwPeKkZNoNlxsDMgNh"
+                href="https://jcnjmxofi1yl.feishu.cn/wiki/OPa4woxiBiFP9okQ9yWcbcXpnEw?from=from_copylink"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-3 bg-white px-8 py-4 rounded-2xl shadow-md border-2 border-indigo-100 hover:border-indigo-500 hover:shadow-lg transition-all transform hover:-translate-y-1"
