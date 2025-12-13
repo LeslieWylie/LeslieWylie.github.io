@@ -84,40 +84,6 @@ const BaziForm: React.FC<BaziFormProps> = ({ onSubmit, isLoading }) => {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         
-        {/* API Configuration Section */}
-        <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
-          <div className="flex items-center gap-2 mb-3 text-gray-700 text-sm font-bold">
-            <Settings className="w-4 h-4" />
-            <span>模型接口设置 (必填)</span>
-          </div>
-          <div className="space-y-3">
-             <div>
-               <label className="block text-xs font-bold text-gray-600 mb-1">API Base URL</label>
-               <input
-                  type="text"
-                  name="apiBaseUrl"
-                  value={formData.apiBaseUrl}
-                  onChange={handleChange}
-                  placeholder="https://max.openai365.top/v1"
-                  className={`w-full px-3 py-2 border rounded-lg text-xs font-mono outline-none ${formErrors.apiBaseUrl ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:ring-2 focus:ring-gray-400'}`}
-                />
-                {formErrors.apiBaseUrl && <p className="text-red-500 text-xs mt-1">{formErrors.apiBaseUrl}</p>}
-             </div>
-             <div>
-               <label className="block text-xs font-bold text-gray-600 mb-1">API Key</label>
-               <input
-                  type="password"
-                  name="apiKey"
-                  value={formData.apiKey}
-                  onChange={handleChange}
-                  placeholder="sk-..."
-                  className={`w-full px-3 py-2 border rounded-lg text-xs font-mono outline-none ${formErrors.apiKey ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:ring-2 focus:ring-gray-400'}`}
-                />
-                {formErrors.apiKey && <p className="text-red-500 text-xs mt-1">{formErrors.apiKey}</p>}
-             </div>
-          </div>
-        </div>
-
         {/* Name & Gender */}
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -273,6 +239,40 @@ const BaziForm: React.FC<BaziFormProps> = ({ onSubmit, isLoading }) => {
              当前大运排序规则：
              <span className="font-bold text-indigo-900">{daYunDirectionInfo}</span>
           </p>
+        </div>
+
+        {/* API Configuration Section */}
+        <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+          <div className="flex items-center gap-2 mb-3 text-gray-700 text-sm font-bold">
+            <Settings className="w-4 h-4" />
+            <span>模型接口设置 (必填)</span>
+          </div>
+          <div className="space-y-3">
+             <div>
+               <label className="block text-xs font-bold text-gray-600 mb-1">API Base URL</label>
+               <input
+                  type="text"
+                  name="apiBaseUrl"
+                  value={formData.apiBaseUrl}
+                  onChange={handleChange}
+                  placeholder="https://max.openai365.top/v1"
+                  className={`w-full px-3 py-2 border rounded-lg text-xs font-mono outline-none ${formErrors.apiBaseUrl ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:ring-2 focus:ring-gray-400'}`}
+                />
+                {formErrors.apiBaseUrl && <p className="text-red-500 text-xs mt-1">{formErrors.apiBaseUrl}</p>}
+             </div>
+             <div>
+               <label className="block text-xs font-bold text-gray-600 mb-1">API Key</label>
+               <input
+                  type="password"
+                  name="apiKey"
+                  value={formData.apiKey}
+                  onChange={handleChange}
+                  placeholder="sk-..."
+                  className={`w-full px-3 py-2 border rounded-lg text-xs font-mono outline-none ${formErrors.apiKey ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:ring-2 focus:ring-gray-400'}`}
+                />
+                {formErrors.apiKey && <p className="text-red-500 text-xs mt-1">{formErrors.apiKey}</p>}
+             </div>
+          </div>
         </div>
 
         <button
