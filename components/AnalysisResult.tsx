@@ -10,9 +10,10 @@ interface AnalysisResultProps {
 const ScoreBar = ({ score }: { score: number }) => {
   // Color based on score
   let colorClass = "bg-gray-300";
-  if (score >= 8) colorClass = "bg-green-500";
-  else if (score >= 6) colorClass = "bg-indigo-500";
-  else if (score >= 4) colorClass = "bg-yellow-500";
+  if (score >= 9) colorClass = "bg-green-500";
+  else if (score >= 7) colorClass = "bg-indigo-500";
+  else if (score >= 5) colorClass = "bg-yellow-500";
+  else if (score >= 3) colorClass = "bg-orange-500";
   else colorClass = "bg-red-500";
 
   return (
@@ -148,7 +149,7 @@ const AnalysisResult: React.FC<AnalysisResultProps> = ({ analysis }) => {
                   <span className="text-xs px-2 py-0.5 bg-green-100 text-green-600 rounded font-bold">极好</span>
                 </li>
               </ul>
-              <p className="text-xs text-gray-400 italic leading-relaxed border-t border-gray-100 pt-2 text-justify">
+              <p className="text-xs text-black leading-relaxed border-t border-gray-100 pt-2 text-justify">
                 注：命运还受环境和个人选择影响，八字趋势不能完全代表真实人生，命理学不是玄学，而是帮助我们在人生列车上做出更好选择的哲学工具。一命二运三风水 四积阴德五读书 六名七相八敬神 九遇贵人十养生。
               </p>
             </div>
