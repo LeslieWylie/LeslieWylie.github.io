@@ -134,7 +134,7 @@ const BaziForm: React.FC<BaziFormProps> = ({ onSubmit, isLoading }) => {
         <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
           <div className="flex items-center gap-2 mb-3 text-amber-800 text-sm font-bold">
             <Sparkles className="w-4 h-4" />
-            <span>请输入四柱干支</span>
+            <span>输入四柱干支 (必填)</span>
           </div>
           
           {/* Birth Year Input - Added as requested */}
@@ -304,7 +304,7 @@ const BaziForm: React.FC<BaziFormProps> = ({ onSubmit, isLoading }) => {
           ) : (
             <>
               <Sparkles className="h-5 w-5 text-amber-300" />
-              <span>开始生成人生K线</span>
+              <span>生成人生K线</span>
             </>
           )}
         </button>
