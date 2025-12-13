@@ -4,7 +4,7 @@ import LifeKLineChart from './components/LifeKLineChart';
 import AnalysisResult from './components/AnalysisResult';
 import { UserInput, LifeDestinyResult } from './types';
 import { generateLifeAnalysis } from './services/geminiService';
-import { Sparkles, AlertCircle } from 'lucide-react';
+import { Sparkles, AlertCircle, BookOpen, ArrowRight } from 'lucide-react';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -40,8 +40,10 @@ const App: React.FC = () => {
               <p className="text-xs text-gray-500 uppercase tracking-widest">Life Destiny K-Line</p>
             </div>
           </div>
-          <div className="hidden md:block text-sm text-gray-400">
-             基于 Gemini 2.5 Pro 模型驱动
+          <div className="flex items-center gap-6">
+            <div className="hidden md:block text-sm text-gray-400 font-medium bg-gray-100 px-3 py-1 rounded-full">
+               基于 AI 大模型驱动
+            </div>
           </div>
         </div>
       </header>
@@ -52,16 +54,33 @@ const App: React.FC = () => {
         {/* If no result, show intro and form */}
         {!result && (
           <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 animate-fade-in">
-            <div className="text-center max-w-2xl">
+            <div className="text-center max-w-2xl flex flex-col items-center">
               <h2 className="text-4xl md:text-5xl font-serif-sc font-bold text-gray-900 mb-6">
                 洞悉命运起伏 <br/>
                 <span className="text-indigo-600">预见人生轨迹</span>
               </h2>
-              <p className="text-gray-600 text-lg leading-relaxed">
+              <p className="text-gray-600 text-lg leading-relaxed mb-8">
                 结合传统<strong>八字命理</strong>与现代金融数据可视化，
                 我们将您的一生运势绘制成类似股票行情的K线图。
                 助您发现人生牛市，规避风险熊市，把握关键转折点。
               </p>
+
+              {/* Large Tutorial Link */}
+              <a 
+                href="https://lsgljam25eq6.sg.larksuite.com/wiki/TVWLw1I9yiwPeKkZNoNlxsDMgNh"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3 bg-white px-8 py-4 rounded-2xl shadow-md border-2 border-indigo-100 hover:border-indigo-500 hover:shadow-lg transition-all transform hover:-translate-y-1"
+              >
+                <div className="bg-indigo-100 p-2 rounded-full text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                  <BookOpen className="w-6 h-6" />
+                </div>
+                <div className="text-left">
+                  <div className="text-xl font-bold text-gray-800 group-hover:text-indigo-700 transition-colors">
+                    查看使用教程
+                  </div>
+                </div>
+              </a>
             </div>
             
             <BaziForm onSubmit={handleFormSubmit} isLoading={loading} />
