@@ -4,6 +4,7 @@ import LifeKLineChart from './components/LifeKLineChart';
 import AnalysisResult from './components/AnalysisResult';
 import { UserInput, LifeDestinyResult } from './types';
 import { generateLifeAnalysis } from './services/geminiService';
+import { API_STATUS } from './constants';
 import { Sparkles, AlertCircle, BookOpen, ArrowRight } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -12,6 +13,14 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const handleFormSubmit = async (data: UserInput) => {
+    // 检查系统状态
+    if (API_STATUS === 0) {
+      setError("当前服务器繁忙，使用的用户过多导致API堵塞，请择时再来");
+      // 滚动到错误信息处 (可选，但为了确保用户看到)
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setResult(null);
@@ -67,7 +76,7 @@ const App: React.FC = () => {
 
               {/* Large Tutorial Link */}
               <a 
-                href="https://jcnjmxofi1yl.feishu.cn/wiki/OPa4woxiBiFP9okQ9yWcbcXpnEw?from=from_copylink"
+                href="https://lsgljam25eq6.sg.larksuite.com/wiki/TVWLw1I9yiwPeKkZNoNlxsDMgNh"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-3 bg-white px-8 py-4 rounded-2xl shadow-md border-2 border-indigo-100 hover:border-indigo-500 hover:shadow-lg transition-all transform hover:-translate-y-1"
@@ -79,6 +88,9 @@ const App: React.FC = () => {
                   <div className="text-xl font-bold text-gray-800 group-hover:text-indigo-700 transition-colors">
                     查看使用教程
                   </div>
+                  <div className="text-xs text-gray-400 font-medium group-hover:text-indigo-400">
+                    新手必读指南 →
+                  </div>
                 </div>
               </a>
             </div>
@@ -86,9 +98,9 @@ const App: React.FC = () => {
             <BaziForm onSubmit={handleFormSubmit} isLoading={loading} />
 
             {error && (
-              <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-100 max-w-md w-full">
+              <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-100 max-w-md w-full animate-bounce-short">
                 <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                <p className="text-sm">{error}</p>
+                <p className="text-sm font-bold">{error}</p>
               </div>
             )}
           </div>
