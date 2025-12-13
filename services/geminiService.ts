@@ -16,7 +16,7 @@ const getStemPolarity = (pillar: string): 'YANG' | 'YIN' => {
 
 export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestinyResult> => {
   
-  const { apiKey, apiBaseUrl } = input;
+  const { apiKey, apiBaseUrl, modelName } = input;
 
   if (!apiKey || !apiKey.trim()) {
     throw new Error("请在表单中填写有效的 API Key");
@@ -27,6 +27,8 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
 
   // Remove trailing slash if present
   const cleanBaseUrl = apiBaseUrl.replace(/\/+$/, "");
+  // Use user provided model name or fallback
+  const targetModel = modelName && modelName.trim() ? modelName.trim() : "gemini-3-pro-preview";
 
   const genderStr = input.gender === Gender.MALE ? '男 (乾造)' : '女 (坤造)';
   const startAgeInt = parseInt(input.startAge) || 1;
@@ -100,7 +102,7 @@ export const generateLifeAnalysis = async (input: UserInput): Promise<LifeDestin
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: "gemini-3-pro-preview", 
+        model: targetModel, 
         messages: [
           { role: "system", content: BAZI_SYSTEM_INSTRUCTION },
           { role: "user", content: userPrompt }
