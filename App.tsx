@@ -16,8 +16,7 @@ const App: React.FC = () => {
     // 检查系统状态
     if (API_STATUS === 0) {
       setError("当前服务器繁忙，使用的用户过多导致API堵塞，请择时再来");
-      // 滚动到错误信息处 (可选，但为了确保用户看到)
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Removed scrollTo to keep user context
       return;
     }
 
