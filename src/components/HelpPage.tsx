@@ -63,7 +63,7 @@ const HelpPage: React.FC<HelpPageProps> = ({ onClose }) => {
                 您可以使用以下方式获取八字信息：
               </p>
               <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
-                <li>使用专业的八字排盘工具（如：元亨利贞、紫微斗数等）</li>
+                <li>使用专业的八字排盘工具，如：元亨利贞、问真八字（推荐）等</li>
                 <li>咨询专业的命理师</li>
                 <li>使用在线八字排盘网站</li>
               </ul>
