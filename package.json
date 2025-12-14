@@ -9,12 +9,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.4",
     "lucide-react": "^0.561.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "recharts": "^2.12.7"
+    "react-hook-form": "^7.68.0",
+    "recharts": "^2.12.7",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@types/html2canvas": "^0.5.35",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.2.1",

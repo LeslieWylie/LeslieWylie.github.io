@@ -15,6 +15,10 @@ dist-ssr
 # Old blog backup
 blog/
 
+# User data (sensitive)
+data/Users_data/*.json
+!data/Users_data/.gitkeep
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

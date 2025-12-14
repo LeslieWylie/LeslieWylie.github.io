@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Upload, FileText, AlertCircle, CheckCircle } from 'lucide-react';
 import { LifeDestinyResult } from '../types';
+import { validateLifeDestinyResult, getValidationErrors } from '../utils/validation';
 
 interface FileUploadProps {
   onUpload: (data: LifeDestinyResult) => void;
@@ -11,6 +12,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [validationDetails, setValidationDetails] = useState<string[]>([]);
 
   // 清理 bazi 数组中的标注
   const cleanBazi = (bazi: string[]): string[] => {
@@ -24,7 +26,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
     const cleanedBazi = cleanBazi(raw.bazi || []);
 
     return {
-      chartData: raw.chartPoints || [],
+      chartData: raw.chartPoints || raw.chartData || [],
       analysis: {
         bazi: cleanedBazi,
         summary: raw.summary || "无摘要",
@@ -46,6 +48,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
   const handleFile = (file: File) => {
     setError(null);
     setSuccess(false);
+    setValidationDetails([]);
 
     if (!file.name.endsWith('.json')) {
       setError('请上传 JSON 格式的文件');
@@ -66,6 +69,20 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
 
         // 转换数据格式
         const convertedData = convertGeminiResult(rawData);
+
+        // 使用 zod 进行严格验证
+        const validationResult = validateLifeDestinyResult(convertedData);
+
+        if (!validationResult.success) {
+          const errors = getValidationErrors(validationResult.error);
+          const errorMessages = Object.entries(errors).map(
+            ([path, message]) => `${path}: ${message}`
+          );
+          
+          setValidationDetails(errorMessages);
+          setError(`数据验证失败，发现 ${errorMessages.length} 个问题。请查看详细信息。`);
+          return;
+        }
 
         // 验证数据完整性
         if (!convertedData.chartData || convertedData.chartData.length === 0) {
@@ -168,9 +185,21 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
       </div>
 
       {error && (
-        <div className="mt-4 flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-100">
-          <AlertCircle className="w-5 h-5 flex-shrink-0" />
-          <p className="text-sm font-medium">{error}</p>
+        <div className="mt-4">
+          <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-100">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <p className="text-sm font-medium flex-1">{error}</p>
+          </div>
+          {validationDetails.length > 0 && (
+            <div className="mt-2 bg-red-50 border border-red-200 rounded-lg p-3 max-h-40 overflow-y-auto">
+              <p className="text-xs font-bold text-red-800 mb-2">验证详情：</p>
+              <ul className="text-xs text-red-700 space-y-1 list-disc list-inside">
+                {validationDetails.map((detail, index) => (
+                  <li key={index}>{detail}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
 
@@ -185,4 +214,3 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
 };
 
 export default FileUpload;
-
