@@ -15,32 +15,59 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
   const [validationDetails, setValidationDetails] = useState<string[]>([]);
 
   // 清理 bazi 数组中的标注
-  const cleanBazi = (bazi: string[]): string[] => {
+  const cleanBazi = (bazi: string[] | undefined): string[] => {
+    if (!Array.isArray(bazi)) {
+      return [];
+    }
     return bazi.map(pillar => {
+      if (typeof pillar !== 'string') {
+        return String(pillar || '').replace(/\s*\([^)]*\)\s*/g, '').trim();
+      }
       return pillar.replace(/\s*\([^)]*\)\s*/g, '').trim();
-    });
+    }).filter(p => p.length > 0);
   };
 
   // 转换 Gemini 返回的格式为项目所需格式
   const convertGeminiResult = (raw: any): LifeDestinyResult => {
-    const cleanedBazi = cleanBazi(raw.bazi || []);
+    // 确保 bazi 是数组
+    let baziArray: string[] = [];
+    if (Array.isArray(raw.bazi)) {
+      baziArray = raw.bazi;
+    } else if (raw.bazi && typeof raw.bazi === 'object') {
+      // 如果是对象，尝试转换为数组
+      baziArray = Object.values(raw.bazi).filter(v => typeof v === 'string') as string[];
+    }
+    
+    const cleanedBazi = cleanBazi(baziArray);
+    
+    // 确保至少有4个元素
+    while (cleanedBazi.length < 4) {
+      cleanedBazi.push('');
+    }
+
+    // 获取 chartData
+    const chartData = Array.isArray(raw.chartPoints) 
+      ? raw.chartPoints 
+      : Array.isArray(raw.chartData) 
+        ? raw.chartData 
+        : [];
 
     return {
-      chartData: raw.chartPoints || raw.chartData || [],
+      chartData: chartData,
       analysis: {
-        bazi: cleanedBazi,
-        summary: raw.summary || "无摘要",
-        summaryScore: raw.summaryScore || 5,
-        industry: raw.industry || "无",
-        industryScore: raw.industryScore || 5,
-        wealth: raw.wealth || "无",
-        wealthScore: raw.wealthScore || 5,
-        marriage: raw.marriage || "无",
-        marriageScore: raw.marriageScore || 5,
-        health: raw.health || "无",
-        healthScore: raw.healthScore || 5,
-        family: raw.family || "无",
-        familyScore: raw.familyScore || 5,
+        bazi: cleanedBazi.slice(0, 4), // 确保只有4个元素
+        summary: String(raw.summary || "无摘要"),
+        summaryScore: typeof raw.summaryScore === 'number' ? raw.summaryScore : 5,
+        industry: String(raw.industry || "无"),
+        industryScore: typeof raw.industryScore === 'number' ? raw.industryScore : 5,
+        wealth: String(raw.wealth || "无"),
+        wealthScore: typeof raw.wealthScore === 'number' ? raw.wealthScore : 5,
+        marriage: String(raw.marriage || "无"),
+        marriageScore: typeof raw.marriageScore === 'number' ? raw.marriageScore : 5,
+        health: String(raw.health || "无"),
+        healthScore: typeof raw.healthScore === 'number' ? raw.healthScore : 5,
+        family: String(raw.family || "无"),
+        familyScore: typeof raw.familyScore === 'number' ? raw.familyScore : 5,
       },
     };
   };
@@ -74,7 +101,11 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
         const validationResult = validateLifeDestinyResult(convertedData);
 
         if (!validationResult.success) {
-          const errors = getValidationErrors(validationResult.error);
+          // 安全地获取验证错误
+          const errors = validationResult.error 
+            ? getValidationErrors(validationResult.error)
+            : { general: '数据验证失败，请检查数据格式' };
+          
           const errorMessages = Object.entries(errors).map(
             ([path, message]) => `${path}: ${message}`
           );
