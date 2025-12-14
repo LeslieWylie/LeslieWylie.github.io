@@ -4,7 +4,11 @@ export enum Gender {
   FEMALE = 'Female',
 }
 
-export interface UserInput {
+// Prompt类型
+export type PromptType = 'default' | 'detailed' | 'simple' | 'custom';
+
+// 简化的用户输入（不包含API配置）
+export interface BaziInput {
   name?: string;
   gender: Gender;
   birthYear: string;   // 出生年份 (如 1990)
@@ -12,11 +16,15 @@ export interface UserInput {
   monthPillar: string; // 月柱
   dayPillar: string;   // 日柱
   hourPillar: string;  // 时柱
-  startAge: string;    // 起运年龄 (虚岁) - Changed to string to handle input field state easily, parse later
+  startAge: string;    // 起运年龄 (虚岁)
   firstDaYun: string;  // 第一步大运干支
-  
-  // New API Configuration Fields
-  modelName: string;   // 使用的模型名称
+  promptType?: PromptType; // Prompt类型
+  customPrompt?: string;  // 自定义Prompt（当promptType为custom时使用）
+}
+
+// 保留旧的UserInput用于向后兼容（如果还需要API调用功能）
+export interface UserInput extends BaziInput {
+  modelName: string;
   apiBaseUrl: string;
   apiKey: string;
 }

@@ -1,40 +1,48 @@
-
 import React, { useState } from 'react';
 import BaziForm from './components/BaziForm';
 import LifeKLineChart from './components/LifeKLineChart';
 import AnalysisResult from './components/AnalysisResult';
-import { UserInput, LifeDestinyResult } from './types';
-import { generateLifeAnalysis } from './services/geminiService';
-import { API_STATUS } from './constants';
-import { Sparkles, AlertCircle, BookOpen, Key } from 'lucide-react';
+import PromptDisplay from './components/PromptDisplay';
+import FileUpload from './components/FileUpload';
+import { BaziInput, LifeDestinyResult } from './types';
+import { generateGeminiPrompt } from './services/promptGenerator';
+import { Sparkles } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<LifeDestinyResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>('');
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [promptData, setPromptData] = useState<{ systemPrompt: string; userPrompt: string } | null>(null);
+  const [baziInput, setBaziInput] = useState<BaziInput | null>(null);
 
-  const handleFormSubmit = async (data: UserInput) => {
-    // 检查系统状态
-    if (API_STATUS === 0) {
-      setError("当前服务器繁忙，使用的用户过多导致API堵塞，请择时再来");
-      // Removed scrollTo to keep user context
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setResult(null);
-    setUserName(data.name || '');
-
+  const handleGeneratePrompt = async (data: BaziInput) => {
+    setBaziInput(data);
+    setShowPrompt(false); // 先关闭，等待加载完成
     try {
-      const analysis = await generateLifeAnalysis(data);
-      setResult(analysis);
-    } catch (err: any) {
-      setError(err.message || "命理测算过程中发生了意外错误，请重试。");
-    } finally {
-      setLoading(false);
+      const prompts = await generateGeminiPrompt(data);
+      setPromptData({
+        systemPrompt: prompts.systemPrompt,
+        userPrompt: prompts.userPrompt
+      });
+      setShowPrompt(true);
+      setUserName(data.name || `${data.birthYear}年 ${data.yearPillar} ${data.monthPillar} ${data.dayPillar} ${data.hourPillar}`);
+    } catch (error) {
+      console.error('加载 Prompt 失败:', error);
+      alert('加载 Prompt 失败，请刷新页面重试');
     }
+  };
+
+  const handleFileUpload = (data: LifeDestinyResult) => {
+    setResult(data);
+    setShowPrompt(false);
+  };
+
+  const handleReset = () => {
+    setResult(null);
+    setShowPrompt(false);
+    setPromptData(null);
+    setBaziInput(null);
+    setUserName('');
   };
 
   return (
@@ -53,7 +61,7 @@ const App: React.FC = () => {
           </div>
           <div className="flex items-center gap-6">
             <div className="hidden md:block text-sm text-gray-400 font-medium bg-gray-100 px-3 py-1 rounded-full">
-               基于 AI 大模型驱动 推特@0xSakura666
+               基于 AI 大模型驱动
             </div>
           </div>
         </div>
@@ -65,55 +73,39 @@ const App: React.FC = () => {
         {/* If no result, show intro and form */}
         {!result && (
           <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 animate-fade-in">
-            <div className="text-center max-w-2xl flex flex-col items-center">
-              <h2 className="text-4xl md:text-5xl font-serif-sc font-bold text-gray-900 mb-6">
+            <div className="text-center max-w-2xl flex flex-col items-center mb-4">
+              <h2 className="text-4xl md:text-5xl font-serif-sc font-bold text-gray-900 mb-4">
                 洞悉命运起伏 <br/>
                 <span className="text-indigo-600">预见人生轨迹</span>
               </h2>
-              <p className="text-gray-600 text-lg leading-relaxed mb-8">
+              <p className="text-gray-600 text-lg leading-relaxed">
                 结合<strong>传统八字命理</strong>与<strong>金融可视化技术</strong>
                 将您的一生运势绘制成类似股票行情的K线图。
                 助您发现人生牛市，规避风险熊市，把握关键转折点。
               </p>
-
-              {/* Tutorial Buttons Group */}
-              <div className="flex flex-row gap-4 w-full max-w-lg mb-4">
-                {/* Usage Tutorial */}
-                <a 
-                  href="https://jcnjmxofi1yl.feishu.cn/wiki/OPa4woxiBiFP9okQ9yWcbcXpnEw"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-white px-4 py-3 rounded-xl shadow-sm border border-indigo-100 hover:border-indigo-500 hover:shadow-md transition-all transform hover:-translate-y-0.5 group"
-                >
-                  <div className="bg-indigo-50 p-1.5 rounded-full text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                    <BookOpen className="w-4 h-4" />
-                  </div>
-                  <span className="text-base font-bold text-gray-800 group-hover:text-indigo-700 transition-colors">使用教程</span>
-                </a>
-
-                {/* API Tutorial */}
-                <a 
-                  href="https://jcnjmxofi1yl.feishu.cn/wiki/JX0iwzoeqie3GEkJ8XQcMesan3c"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-white px-4 py-3 rounded-xl shadow-sm border border-emerald-100 hover:border-emerald-500 hover:shadow-md transition-all transform hover:-translate-y-0.5 group"
-                >
-                  <div className="bg-emerald-50 p-1.5 rounded-full text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                    <Key className="w-4 h-4" />
-                  </div>
-                  <span className="text-base font-bold text-gray-800 group-hover:text-emerald-700 transition-colors">API教程</span>
-                </a>
-              </div>
             </div>
             
-            <BaziForm onSubmit={handleFormSubmit} isLoading={loading} />
-
-            {error && (
-              <div className="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-100 max-w-md w-full animate-bounce-short">
-                <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                <p className="text-sm font-bold">{error}</p>
+            <div className="w-full max-w-4xl grid md:grid-cols-2 gap-8">
+              {/* 左侧：表单 */}
+              <div className="flex flex-col">
+                <BaziForm onGeneratePrompt={handleGeneratePrompt} />
               </div>
-            )}
+
+              {/* 右侧：文件上传 */}
+              {!showPrompt && (
+                <div className="flex flex-col">
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">直接上传 JSON 文件</h3>
+                    <p className="text-sm text-gray-500">
+                      {baziInput 
+                        ? '已生成 Prompt 并完成与 Gemini 的对话后，请上传返回的 JSON 文件'
+                        : '如果您已有 JSON 结果文件，可以直接上传查看 K 线图'}
+                    </p>
+                  </div>
+                  <FileUpload onUpload={handleFileUpload} />
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -126,7 +118,7 @@ const App: React.FC = () => {
                  {userName ? `${userName}的` : ''}命盘分析报告
                </h2>
                <button 
-                 onClick={() => setResult(null)}
+                 onClick={handleReset}
                  className="text-indigo-600 hover:text-indigo-800 font-medium text-sm"
                >
                  ← 重新排盘
@@ -161,6 +153,17 @@ const App: React.FC = () => {
           <p>&copy; {new Date().getFullYear()} 人生K线项目 推特@0xSakura666 | 仅供娱乐与文化研究，请勿迷信</p>
         </div>
       </footer>
+
+      {/* Prompt Display Modal */}
+      {showPrompt && promptData && (
+        <PromptDisplay
+          systemPrompt={promptData.systemPrompt}
+          userPrompt={promptData.userPrompt}
+          onClose={() => {
+            setShowPrompt(false);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -12,7 +12,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    base: './', 
+    base: process.env.NODE_ENV === 'production' ? '/' : './',
+    root: '.',
+    publicDir: 'public',
     build: {
       outDir: 'dist',
       assetsDir: 'assets',
