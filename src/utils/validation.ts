@@ -91,20 +91,30 @@ export const validateLifeDestinyResult = (data: unknown) => {
 };
 
 // 获取验证错误信息（友好格式）
-export const getValidationErrors = (error: z.ZodError | unknown): Record<string, string> => {
+export const getValidationErrors = (error: unknown): Record<string, string> => {
   const errors: Record<string, string> = {};
   
   // 检查是否是 ZodError
-  if (error && typeof error === 'object' && 'errors' in error) {
-    const zodError = error as z.ZodError;
-    if (Array.isArray(zodError.errors)) {
-      zodError.errors.forEach((err) => {
-        const path = err.path ? err.path.join('.') : 'unknown';
+  if (error && typeof error === 'object') {
+    // 使用类型守卫检查是否是 ZodError
+    if ('issues' in error && Array.isArray((error as any).issues)) {
+      const zodError = error as z.ZodError;
+      zodError.issues.forEach((err: z.ZodIssue) => {
+        const path = err.path && err.path.length > 0 ? err.path.join('.') : 'unknown';
         errors[path] = err.message || '验证失败';
       });
+    } else if ('errors' in error && Array.isArray((error as any).errors)) {
+      // 兼容旧版本的 ZodError 格式
+      (error as any).errors.forEach((err: any) => {
+        const path = err.path && Array.isArray(err.path) ? err.path.join('.') : 'unknown';
+        errors[path] = err.message || '验证失败';
+      });
+    } else {
+      // 如果不是 ZodError，返回通用错误
+      errors['general'] = error instanceof Error ? error.message : '数据验证失败';
     }
   } else {
-    // 如果不是 ZodError，返回通用错误
+    // 如果不是对象，返回通用错误
     errors['general'] = error instanceof Error ? error.message : '数据验证失败';
   }
   
