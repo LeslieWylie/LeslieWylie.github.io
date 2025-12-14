@@ -24,7 +24,7 @@ export const baziInputSchema = z.object({
     .refine((val) => {
       const year = parseInt(val);
       return !isNaN(year) && year >= 1900 && year <= 2100;
-    }, { message: '出生年份应在 1900-2100 之间' }),
+    }, { message: '出生年份应在 1900-2100 之间' }), // 出生年份限制在2100，但流年可以到2200
   yearPillar: ganZhiSchema,
   monthPillar: ganZhiSchema,
   dayPillar: ganZhiSchema,
@@ -43,7 +43,7 @@ export const baziInputSchema = z.object({
 // K线数据点验证 Schema
 export const kLinePointSchema = z.object({
   age: z.number().int().min(1).max(100),
-  year: z.number().int().min(1900).max(2100),
+  year: z.number().int().min(1900).max(2200), // 支持出生年份1900-2100，活到100岁最多到2200年
   ganZhi: ganZhiSchema,
   daYun: z.string().optional(),
   open: z.number().min(0).max(100),
