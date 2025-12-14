@@ -15,7 +15,7 @@ import { BaziInput, LifeDestinyResult } from './types';
 import { generateGeminiPrompt } from './services/promptGenerator';
 import { useToast } from './hooks/useToast';
 import { saveToHistory } from './utils/storage';
-import { Sparkles, History, HelpCircle } from 'lucide-react';
+import { Sparkles, History, HelpCircle, Github, ExternalLink } from 'lucide-react';
 import HelpPage from './components/HelpPage';
 
 const App: React.FC = () => {
@@ -254,8 +254,18 @@ const App: React.FC = () => {
 
         {/* Footer */}
         <footer className="w-full bg-gray-900 text-gray-400 py-8 mt-auto">
-          <div className="max-w-7xl mx-auto px-4 text-center text-sm">
-            <p>&copy; {new Date().getFullYear()} 人生K线项目  | 仅供娱乐与文化研究，请勿迷信</p>
+          <div className="max-w-7xl mx-auto px-4 text-center">
+            <p className="text-sm mb-3">&copy; {new Date().getFullYear()} 人生K线项目  | 仅供娱乐与文化研究，请勿迷信</p>
+            <a
+              href="https://github.com/LeslieWylie/LeslieWylie.github.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+            >
+              <Github className="w-4 h-4" />
+              <span>GitHub 仓库</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
           </div>
         </footer>
 

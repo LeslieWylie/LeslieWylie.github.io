@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Book, Search, ChevronRight, HelpCircle, FileText, Code, BarChart3 } from 'lucide-react';
+import { X, Book, Search, ChevronRight, HelpCircle, FileText, Code, BarChart3, Github, ExternalLink } from 'lucide-react';
 
 interface HelpPageProps {
   onClose: () => void;
@@ -368,10 +368,22 @@ const HelpPage: React.FC<HelpPageProps> = ({ onClose }) => {
 
         {/* Footer */}
         <div className="p-6 border-t border-gray-200 bg-gray-50">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">
-              需要更多帮助？请查看项目文档或提交 Issue
-            </p>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex flex-col gap-2">
+              <p className="text-sm text-gray-500">
+                需要更多帮助？请查看项目文档或提交 Issue
+              </p>
+              <a
+                href="https://github.com/LeslieWylie/LeslieWylie.github.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 transition-colors"
+              >
+                <Github className="w-4 h-4" />
+                <span>访问 GitHub 仓库</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
             <button
               onClick={onClose}
               className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
