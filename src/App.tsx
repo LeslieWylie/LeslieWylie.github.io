@@ -15,7 +15,8 @@ import { BaziInput, LifeDestinyResult } from './types';
 import { generateGeminiPrompt } from './services/promptGenerator';
 import { useToast } from './hooks/useToast';
 import { saveToHistory } from './utils/storage';
-import { Sparkles, History } from 'lucide-react';
+import { Sparkles, History, HelpCircle } from 'lucide-react';
+import HelpPage from './components/HelpPage';
 
 const App: React.FC = () => {
   const [result, setResult] = useState<LifeDestinyResult | null>(null);
@@ -25,6 +26,7 @@ const App: React.FC = () => {
   const [baziInput, setBaziInput] = useState<BaziInput | null>(null);
   const [isLoadingPrompt, setIsLoadingPrompt] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const toast = useToast();
 
   const handleGeneratePrompt = async (data: BaziInput) => {
@@ -49,6 +51,13 @@ const App: React.FC = () => {
   };
 
   const handleFileUpload = (data: LifeDestinyResult) => {
+    // 从数据中提取或使用 baziInput 中的姓名
+    const extractedName = baziInput?.name || data.userName || '';
+    if (extractedName) {
+      data.userName = extractedName;
+      setUserName(extractedName);
+    }
+    
     setResult(data);
     setShowPrompt(false);
     
@@ -98,6 +107,14 @@ const App: React.FC = () => {
             </div>
             <div className="flex items-center gap-4">
               <button
+                onClick={() => setShowHelp(true)}
+                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors font-medium text-sm"
+                title="使用帮助"
+              >
+                <HelpCircle className="w-5 h-5" />
+                <span className="hidden md:inline">使用帮助</span>
+              </button>
+              <button
                 onClick={() => setShowHistory(true)}
                 className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors font-medium text-sm"
                 title="查看历史记录"
@@ -123,11 +140,18 @@ const App: React.FC = () => {
                   洞悉命运起伏 <br/>
                   <span className="text-indigo-600">预见人生轨迹</span>
                 </h2>
-                <p className="text-gray-600 text-lg leading-relaxed">
+                <p className="text-gray-600 text-lg leading-relaxed mb-4">
                   结合<strong>传统八字命理</strong>与<strong>金融可视化技术</strong>
                   将您的一生运势绘制成类似股票行情的K线图。
                   助您发现人生牛市，规避风险熊市，把握关键转折点。
                 </p>
+                <button
+                  onClick={() => setShowHelp(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors font-medium"
+                >
+                  <HelpCircle className="w-4 h-4" />
+                  查看使用帮助
+                </button>
               </div>
               
               <div className="w-full max-w-4xl grid md:grid-cols-2 gap-8">
@@ -192,7 +216,22 @@ const App: React.FC = () => {
                   <span className="text-red-600 font-bold">红色K线</span> 代表运势下跌（凶）。
                   (点击K线查看流年详批，使用鼠标滚轮缩放)
                 </p>
-                <EnhancedKLineChart data={result.chartData} />
+                <EnhancedKLineChart data={result.chartData} userName={result.userName || userName} />
+              </section>
+
+              {/* Bazi Pillars - 四柱信息 */}
+              <section className="animate-fade-in">
+                <div className="flex justify-center gap-2 md:gap-8 bg-gray-900 text-amber-50 p-6 rounded-xl shadow-lg overflow-x-auto">
+                  {result.analysis.bazi.map((pillar, index) => {
+                    const labels = ['年柱', '月柱', '日柱', '时柱'];
+                    return (
+                      <div key={index} className="text-center min-w-[60px]">
+                        <div className="text-xs text-gray-400 mb-1">{labels[index]}</div>
+                        <div className="text-xl md:text-3xl font-serif-sc font-bold tracking-widest">{pillar}</div>
+                      </div>
+                    );
+                  })}
+                </div>
               </section>
 
               {/* Statistics Panel */}
@@ -237,6 +276,11 @@ const App: React.FC = () => {
           onClose={() => setShowHistory(false)}
           onLoadHistory={handleLoadHistory}
         />
+
+        {/* Help Page */}
+        {showHelp && (
+          <HelpPage onClose={() => setShowHelp(false)} />
+        )}
 
         {/* Toast Notifications */}
         <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />

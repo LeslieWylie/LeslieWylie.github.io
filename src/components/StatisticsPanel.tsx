@@ -10,17 +10,22 @@ const StatisticsPanel: React.FC<StatisticsPanelProps> = ({ data }) => {
   const statistics = useMemo(() => {
     if (!data || data.length === 0) return null;
 
-    // 基础统计
-    const scores = data.map(d => d.score);
-    const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
-    const maxScore = Math.max(...scores);
-    const minScore = Math.min(...scores);
-    const maxYear = data.find(d => d.score === maxScore)!;
-    const minYear = data.find(d => d.score === minScore)!;
+    // 过滤掉平盘年份（开盘价等于收盘价的年份）
+    const validData = data.filter(d => d.open !== d.close);
 
-    // 大运周期分析
+    // 基础统计（只统计非平盘年份）
+    const scores = validData.map(d => d.score);
+    const avgScore = scores.length > 0 
+      ? scores.reduce((a, b) => a + b, 0) / scores.length 
+      : 0;
+    const maxScore = scores.length > 0 ? Math.max(...scores) : 0;
+    const minScore = scores.length > 0 ? Math.min(...scores) : 0;
+    const maxYear = validData.find(d => d.score === maxScore) || data[0];
+    const minYear = validData.find(d => d.score === minScore) || data[0];
+
+    // 大运周期分析（只统计非平盘年份）
     const daYunStats: Record<string, { count: number; avgScore: number; years: number[] }> = {};
-    data.forEach(d => {
+    validData.forEach(d => {
       const daYun = d.daYun || '童限';
       if (!daYunStats[daYun]) {
         daYunStats[daYun] = { count: 0, avgScore: 0, years: [] };
@@ -31,19 +36,21 @@ const StatisticsPanel: React.FC<StatisticsPanelProps> = ({ data }) => {
     });
 
     Object.keys(daYunStats).forEach(key => {
-      daYunStats[key].avgScore = daYunStats[key].avgScore / daYunStats[key].count;
+      if (daYunStats[key].count > 0) {
+        daYunStats[key].avgScore = daYunStats[key].avgScore / daYunStats[key].count;
+      }
     });
 
-    // 趋势分析（分段）
+    // 趋势分析（分段，只统计非平盘年份）
     const segments = [
-      { name: '童年 (1-12岁)', data: data.filter(d => d.age <= 12) },
-      { name: '青少年 (13-24岁)', data: data.filter(d => d.age > 12 && d.age <= 24) },
-      { name: '青年 (25-36岁)', data: data.filter(d => d.age > 24 && d.age <= 36) },
-      { name: '中年 (37-48岁)', data: data.filter(d => d.age > 36 && d.age <= 48) },
-      { name: '中老年 (49-60岁)', data: data.filter(d => d.age > 48 && d.age <= 60) },
-      { name: '老年 (61-72岁)', data: data.filter(d => d.age > 60 && d.age <= 72) },
-      { name: '高龄 (73-84岁)', data: data.filter(d => d.age > 72 && d.age <= 84) },
-      { name: '高寿 (85-100岁)', data: data.filter(d => d.age > 84) },
+      { name: '童年 (1-12岁)', data: validData.filter(d => d.age <= 12) },
+      { name: '青少年 (13-24岁)', data: validData.filter(d => d.age > 12 && d.age <= 24) },
+      { name: '青年 (25-36岁)', data: validData.filter(d => d.age > 24 && d.age <= 36) },
+      { name: '中年 (37-48岁)', data: validData.filter(d => d.age > 36 && d.age <= 48) },
+      { name: '中老年 (49-60岁)', data: validData.filter(d => d.age > 48 && d.age <= 60) },
+      { name: '老年 (61-72岁)', data: validData.filter(d => d.age > 60 && d.age <= 72) },
+      { name: '高龄 (73-84岁)', data: validData.filter(d => d.age > 72 && d.age <= 84) },
+      { name: '高寿 (85-100岁)', data: validData.filter(d => d.age > 84) },
     ];
 
     const segmentStats = segments.map(seg => ({
@@ -54,11 +61,11 @@ const StatisticsPanel: React.FC<StatisticsPanelProps> = ({ data }) => {
       count: seg.data.length,
     }));
 
-    // 关键转折点（分数变化超过20的年份）
+    // 关键转折点（分数变化超过20的年份，只统计非平盘年份）
     const turningPoints = [];
-    for (let i = 1; i < data.length; i++) {
-      const prev = data[i - 1];
-      const curr = data[i];
+    for (let i = 1; i < validData.length; i++) {
+      const prev = validData[i - 1];
+      const curr = validData[i];
       const change = curr.score - prev.score;
       if (Math.abs(change) >= 20) {
         turningPoints.push({
@@ -73,20 +80,20 @@ const StatisticsPanel: React.FC<StatisticsPanelProps> = ({ data }) => {
       }
     }
 
-    // 运势等级分布
+    // 运势等级分布（只统计非平盘年份）
     const scoreDistribution = {
-      excellent: data.filter(d => d.score >= 80).length,
-      good: data.filter(d => d.score >= 60 && d.score < 80).length,
-      average: data.filter(d => d.score >= 40 && d.score < 60).length,
-      poor: data.filter(d => d.score < 40).length,
+      excellent: validData.filter(d => d.score >= 80).length,
+      good: validData.filter(d => d.score >= 60 && d.score < 80).length,
+      average: validData.filter(d => d.score >= 40 && d.score < 60).length,
+      poor: validData.filter(d => d.score < 40).length,
     };
 
-    // 上升/下降趋势统计
+    // 上升/下降趋势统计（只统计非平盘年份）
     let upTrends = 0;
     let downTrends = 0;
-    for (let i = 1; i < data.length; i++) {
-      if (data[i].score > data[i - 1].score) upTrends++;
-      else if (data[i].score < data[i - 1].score) downTrends++;
+    for (let i = 1; i < validData.length; i++) {
+      if (validData[i].score > validData[i - 1].score) upTrends++;
+      else if (validData[i].score < validData[i - 1].score) downTrends++;
     }
 
     return {
@@ -102,6 +109,7 @@ const StatisticsPanel: React.FC<StatisticsPanelProps> = ({ data }) => {
       upTrends,
       downTrends,
       totalYears: data.length,
+      validYears: validData.length, // 非平盘年份数量
     };
   }, [data]);
 
@@ -117,16 +125,7 @@ const StatisticsPanel: React.FC<StatisticsPanelProps> = ({ data }) => {
       </div>
 
       {/* 基础统计卡片 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-green-700 font-medium">平均运势</span>
-            <TrendingUp className="w-5 h-5 text-green-600" />
-          </div>
-          <p className="text-3xl font-bold text-green-800">{statistics.avgScore}</p>
-          <p className="text-xs text-green-600 mt-1">分 / 100分</p>
-        </div>
-
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-blue-700 font-medium">最高年份</span>

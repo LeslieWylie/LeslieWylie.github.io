@@ -5,7 +5,7 @@ export enum Gender {
 }
 
 // Prompt类型
-export type PromptType = 'default' | 'detailed' | 'simple' | 'custom';
+export type PromptType = 'default' | 'detailed' | 'custom' | 'detailed_v2' | 'detailed_v3';
 
 // 简化的用户输入（不包含API配置）
 export interface BaziInput {
@@ -29,6 +29,58 @@ export interface UserInput extends BaziInput {
   apiKey: string;
 }
 
+// K线趋势类型
+export type TrendType = 'Bullish' | 'Bearish';
+
+// 十神类型
+export type TenGodType = '正官' | '偏官' | '正财' | '偏财' | '正印' | '偏印' | '食神' | '伤官' | '比肩' | '劫财';
+
+// 标签类型
+export type ForecastTag = 'Career' | 'Wealth' | 'Love' | 'Health' | 'Study' | 'Safety' | 'Travel' | 'Family';
+
+// 五行类型
+export type ElementType = 'Wood' | 'Fire' | 'Earth' | 'Metal' | 'Water';
+
+// V2 格式的 K线数据
+export interface KLineData {
+  open: number;
+  close: number;
+  high: number;
+  low: number;
+  trend: TrendType;
+}
+
+// V2 格式的命理数据
+export interface MetaphysicsData {
+  daYun: string;
+  ganZhi: string;
+  tenGod?: TenGodType;
+  interaction?: string[]; // 冲合关系
+  shenSha?: string[]; // 神煞
+  energy?: ElementType; // 最旺五行
+}
+
+// V2 格式的预测数据
+export interface ForecastData {
+  title: string; // 年度概括
+  content: string; // 详细批断
+  tags?: ForecastTag[];
+  advice?: string; // 改运建议
+  luckyColor?: string;
+  luckyDirection?: string;
+}
+
+// V2 格式的时间轴数据点
+export interface TimelinePoint {
+  index: number;
+  age: number;
+  year: number;
+  kLine: KLineData;
+  metaphysics: MetaphysicsData;
+  forecast: ForecastData;
+}
+
+// 旧格式的 K线数据点（向后兼容）
 export interface KLinePoint {
   age: number;
   year: number;
@@ -40,8 +92,85 @@ export interface KLinePoint {
   low: number;
   score: number;
   reason: string; // 这里现在需要存储详细的流年描述
+  // V2 格式的扩展字段（可选，用于兼容）
+  trend?: TrendType;
+  tenGod?: TenGodType;
+  interaction?: string[];
+  shenSha?: string[];
+  energy?: ElementType;
+  title?: string;
+  tags?: ForecastTag[];
+  advice?: string;
+  luckyColor?: string;
+  luckyDirection?: string;
 }
 
+// 四柱详细信息
+export interface PillarInfo {
+  ganZhi: string;
+  naYin?: string; // 纳音
+  shenSha?: string[]; // 神煞
+}
+
+// 原局分析
+export interface BaseChartAnalysis {
+  pattern?: string; // 格局名称
+  strongWeak?: string; // 身强/身弱
+  xiYong?: string[]; // 喜用神
+  jiChou?: string[]; // 忌仇神
+  missing?: string[]; // 缺失五行
+}
+
+// 五行能量分布
+export interface ElementDistribution {
+  wood: number;
+  fire: number;
+  earth: number;
+  metal: number;
+  water: number;
+}
+
+// V2 格式的基础图表数据
+export interface BaseChart {
+  pillars: {
+    year: PillarInfo;
+    month: PillarInfo;
+    day: PillarInfo;
+    hour: PillarInfo;
+  };
+  analysis: BaseChartAnalysis;
+  elementDistribution?: ElementDistribution;
+}
+
+// V2 格式的全局维度评分
+export interface GlobalDimensions {
+  summary: string;
+  scores: {
+    total: number;
+    career: number;
+    wealth: number;
+    marriage: number;
+    health: number;
+    children: number;
+  };
+}
+
+// V2 格式的元数据
+export interface MetaData {
+  version?: string;
+  generator?: string;
+  calendarSystem?: string;
+}
+
+// V2 格式的完整结果
+export interface LifeDestinyResultV2 {
+  meta?: MetaData;
+  baseChart: BaseChart;
+  globalDimensions: GlobalDimensions;
+  timeline: TimelinePoint[];
+}
+
+// 旧格式的分析数据（向后兼容）
 export interface AnalysisData {
   bazi: string[]; // [Year, Month, Day, Hour] pillars
   summary: string;
@@ -63,7 +192,12 @@ export interface AnalysisData {
   familyScore: number; // 0-10
 }
 
+// 统一的结果接口（兼容新旧格式）
 export interface LifeDestinyResult {
-  chartData: KLinePoint[];
-  analysis: AnalysisData;
+  chartData: KLinePoint[]; // 统一转换为 KLinePoint 格式
+  analysis: AnalysisData; // 兼容旧格式
+  // V2 格式的扩展数据（可选）
+  v2Data?: LifeDestinyResultV2;
+  // 用户姓名（用于显示）
+  userName?: string;
 }

@@ -55,19 +55,6 @@ const Card = ({ title, icon: Icon, content, score, colorClass }: any) => (
 const AnalysisResult: React.FC<AnalysisResultProps> = ({ analysis }) => {
   return (
     <div className="w-full space-y-8 animate-fade-in-up">
-      {/* Bazi Pillars */}
-      <div className="flex justify-center gap-2 md:gap-8 bg-gray-900 text-amber-50 p-6 rounded-xl shadow-lg overflow-x-auto">
-        {analysis.bazi.map((pillar, index) => {
-          const labels = ['年柱', '月柱', '日柱', '时柱'];
-          return (
-            <div key={index} className="text-center min-w-[60px]">
-              <div className="text-xs text-gray-400 mb-1">{labels[index]}</div>
-              <div className="text-xl md:text-3xl font-serif-sc font-bold tracking-widest">{pillar}</div>
-            </div>
-          );
-        })}
-      </div>
-
       {/* Summary with Score */}
       <div className="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-xl border border-indigo-100 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">

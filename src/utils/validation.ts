@@ -36,7 +36,7 @@ export const baziInputSchema = z.object({
       return !isNaN(age) && age >= 1 && age <= 100;
     }, { message: '起运年龄应在 1-100 之间' }),
   firstDaYun: ganZhiSchema,
-  promptType: z.enum(['default', 'detailed', 'simple', 'custom']).optional(),
+  promptType: z.enum(['default', 'detailed', 'detailed_v2', 'detailed_v3', 'custom']).optional(),
   customPrompt: z.string().optional(),
 });
 
@@ -51,7 +51,7 @@ export const kLinePointSchema = z.object({
   high: z.number().min(0).max(100),
   low: z.number().min(0).max(100),
   score: z.number().min(0).max(100),
-  reason: z.string().min(10, '流年详批至少需要10个字符'),
+  reason: z.string().min(1, '流年详批不能为空'),
 });
 
 // 分析数据验证 Schema

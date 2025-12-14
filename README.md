@@ -144,32 +144,58 @@ npm run build
 lifekline/
 ├── src/                     # 源代码目录
 │   ├── components/          # React 组件
-│   │   ├── AnalysisResult.tsx   # 分析结果展示组件
-│   │   ├── BaziForm.tsx        # 八字输入表单
-│   │   ├── FileUpload.tsx      # 文件上传组件
-│   │   ├── LifeKLineChart.tsx  # K线图组件
-│   │   └── PromptDisplay.tsx   # Prompt显示组件
-│   ├── services/            # 服务层
-│   │   ├── geminiService.ts    # Gemini API服务（保留用于向后兼容）
-│   │   └── promptGenerator.ts  # Prompt生成服务
+│   │   ├── AnalysisResult.tsx        # 分析结果展示组件
+│   │   ├── BaziForm.tsx              # 八字输入表单
+│   │   ├── DimensionComparisonChart.tsx # 多维度对比图
+│   │   ├── EnhancedKLineChart.tsx     # 增强K线图组件
+│   │   ├── ErrorBoundary.tsx          # 错误边界组件
+│   │   ├── ExportButton.tsx           # 导出功能组件
+│   │   ├── FileUpload.tsx             # 文件上传组件
+│   │   ├── HistoryPanel.tsx           # 历史记录面板
+│   │   ├── LoadingSpinner.tsx         # 加载动画组件
+│   │   ├── PromptDisplay.tsx          # Prompt显示组件
+│   │   ├── StatisticsPanel.tsx       # 统计分析面板
+│   │   ├── Toast.tsx                  # Toast通知组件
+│   │   └── ToastContainer.tsx         # Toast容器组件
+│   ├── hooks/              # 自定义 Hooks
+│   │   └── useToast.ts                # Toast Hook
+│   ├── services/           # 服务层
+│   │   ├── geminiService.ts           # Gemini API服务（保留用于向后兼容）
+│   │   └── promptGenerator.ts         # Prompt生成服务
+│   ├── utils/              # 工具函数
+│   │   ├── storage.ts                 # 本地存储工具
+│   │   └── validation.ts              # 数据验证工具
 │   ├── App.tsx             # 主应用组件
 │   ├── index.tsx           # 入口文件
 │   ├── types.ts            # TypeScript类型定义
-│   └── constants.ts         # 常量配置
+│   ├── constants.ts        # 常量配置
+│   └── vite-env.d.ts       # Vite类型声明
 ├── public/                  # 静态资源目录
+│   ├── prompts/            # Prompt 模板文件
+│   │   ├── default.txt         # 默认 Prompt
+│   │   ├── detailed.txt        # 详细 Prompt
+│   │   ├── detailed_v2.txt     # 详细 Prompt V2（全息数据版）
+│   │   └── detailed_v3.txt     # 详细 Prompt V3（最新版）
 │   ├── metadata.json       # 元数据
 │   └── web.config          # Web服务器配置
 ├── docs/                    # 文档目录
-│   └── GEMINI_PROMPT_GUIDE.md  # Gemini Prompt使用指南
+│   ├── README.md               # 文档索引
+│   ├── DEPLOYMENT.md           # 部署指南
+│   └── TROUBLESHOOTING.md      # 故障排除指南
 ├── data/                    # 数据目录
-│   ├── examples/           # 示例数据
+│   ├── examples/           # 示例数据（可提交到Git）
 │   │   ├── result.json         # 原始示例数据
 │   │   └── result-converted.json # 转换后的示例数据
-│   └── Users_data/         # 用户数据（可选）
+│   └── Users_data/         # 用户数据（已加入.gitignore）
+├── .github/                 # GitHub配置
+│   └── workflows/          # GitHub Actions工作流
+│       └── deploy.yml       # 自动部署配置
 ├── index.html              # HTML模板（Vite入口）
 ├── vite.config.ts          # Vite配置
+├── tailwind.config.js       # Tailwind CSS配置
 ├── tsconfig.json           # TypeScript配置
 ├── package.json            # 项目配置
+├── .gitignore              # Git忽略文件
 └── README.md               # 项目说明文档
 ```
 
@@ -268,7 +294,9 @@ lifekline/
 
 ## 📚 相关文档
 
-- [Gemini Prompt 完整指南](./docs/GEMINI_PROMPT_GUIDE.md) - 详细的 Prompt 使用说明
+- [部署指南](./docs/DEPLOYMENT.md) - GitHub Pages 部署说明
+- [故障排除](./docs/TROUBLESHOOTING.md) - 常见问题和解决方案
+- [文档索引](./docs/README.md) - 所有文档的索引
 
 ---
 
@@ -293,8 +321,6 @@ lifekline/
 ---
 
 ## 👤 作者
-
-**推特@0xSakura666**
 
 - 项目地址：[GitHub](https://github.com/your-username/lifekline)
 - 问题反馈：[Issues](https://github.com/your-username/lifekline/issues)

@@ -12,12 +12,16 @@ dist
 dist-ssr
 *.local
 
-# Old blog backup
-blog/
+# Build output
+dist/
+dist-ssr/
 
 # User data (sensitive)
 data/Users_data/*.json
 !data/Users_data/.gitkeep
+
+# Example data (can be committed)
+!data/examples/
 
 # Editor directories and files
 .vscode/*

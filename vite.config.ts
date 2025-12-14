@@ -15,6 +15,12 @@ export default defineConfig(({ mode }) => {
     base: process.env.NODE_ENV === 'production' ? '/' : './',
     root: '.',
     publicDir: 'public',
+    server: {
+      host: '0.0.0.0', // 允许外部访问
+      port: 5173,
+      strictPort: false, // 如果端口被占用，尝试下一个可用端口
+      open: true, // 自动打开浏览器
+    },
     build: {
       outDir: 'dist',
       assetsDir: 'assets',

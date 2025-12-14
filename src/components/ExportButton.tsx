@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, FileText, Image, FileJson, Loader2 } from 'lucide-react';
+import { FileText, Image, FileJson, Loader2 } from 'lucide-react';
 import { LifeDestinyResult } from '../types';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -47,15 +47,15 @@ const ExportButton: React.FC<ExportButtonProps> = ({ result, userName }) => {
 
       // 导出图表
       const chartCanvas = await html2canvas(chartElement as HTMLElement, {
-        backgroundColor: '#ffffff',
+        background: '#ffffff',
         scale: 2,
-      });
+      } as any);
 
       // 导出分析结果
       const analysisCanvas = await html2canvas(analysisElement as HTMLElement, {
-        backgroundColor: '#ffffff',
+        background: '#ffffff',
         scale: 2,
-      });
+      } as any);
 
       // 合并两个 canvas
       const mergedCanvas = document.createElement('canvas');
@@ -120,9 +120,9 @@ const ExportButton: React.FC<ExportButtonProps> = ({ result, userName }) => {
 
       // 导出图表
       const chartCanvas = await html2canvas(chartElement as HTMLElement, {
-        backgroundColor: '#ffffff',
+        background: '#ffffff',
         scale: 2,
-      });
+      } as any);
 
       const chartImgData = chartCanvas.toDataURL('image/png');
       const chartImgHeight = (chartCanvas.height * (pdfWidth - 2 * margin)) / chartCanvas.width;
@@ -138,9 +138,9 @@ const ExportButton: React.FC<ExportButtonProps> = ({ result, userName }) => {
 
       // 导出分析结果
       const analysisCanvas = await html2canvas(analysisElement as HTMLElement, {
-        backgroundColor: '#ffffff',
+        background: '#ffffff',
         scale: 2,
-      });
+      } as any);
 
       const analysisImgData = analysisCanvas.toDataURL('image/png');
       const analysisImgHeight = (analysisCanvas.height * (pdfWidth - 2 * margin)) / analysisCanvas.width;
@@ -164,11 +164,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({ result, userName }) => {
           margin,
           currentY,
           pdfWidth - 2 * margin,
-          heightToAdd,
-          undefined,
-          'FAST',
-          0,
-          sourceY / 2 // 因为 scale 是 2
+          heightToAdd
         );
 
         currentY += heightToAdd;

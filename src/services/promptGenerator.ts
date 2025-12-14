@@ -94,8 +94,10 @@ const getSystemPromptByType = async (type: PromptType, customPrompt?: string): P
   switch (type) {
     case 'detailed':
       return await loadPromptFromFile('detailed.txt');
-    case 'simple':
-      return await loadPromptFromFile('simple.txt');
+    case 'detailed_v2':
+      return await loadPromptFromFile('detailed_v2.txt');
+    case 'detailed_v3':
+      return await loadPromptFromFile('detailed_v3.txt');
     case 'default':
     default:
       return await loadPromptFromFile('default.txt');
