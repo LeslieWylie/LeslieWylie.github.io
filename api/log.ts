@@ -52,7 +52,7 @@ export default async function handler(req: any, res: any) {
   const body = await parseBody(req);
   const { userId, account, operation, pageData, timestamp } = body || {};
   if (!operation) {
-    return res.status(400).json({ error: 'operation required' });
+    return res.status(400).json({ error: 'operation required', parsedBody: body });
   }
 
   try {
@@ -70,7 +70,12 @@ export default async function handler(req: any, res: any) {
     return res.status(200).json({ ok: true });
   } catch (error) {
     console.error('insert failed', error);
-    return res.status(500).json({ error: 'insert failed' });
+    return res.status(500).json({
+      error: 'insert failed',
+      detail:
+        (error as any)?.message ||
+        (typeof error === 'string' ? error : 'unknown error'),
+    });
   }
 }
 
