@@ -1,9 +1,22 @@
-import { Pool } from 'pg';
+import { createClient } from '@supabase/supabase-js';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-});
+// 校验环境变量，便于在 Vercel / 本地调试时快速发现问题
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('⚠️ 缺少 SUPABASE_URL 或 SUPABASE_SERVICE_ROLE_KEY，日志接口将无法写入数据库。');
+  // 本地调试示例（请替换为你自己的配置后再取消注释）：
+  // process.env.SUPABASE_URL = 'https://xxxxxxxx.supabase.co';
+  // process.env.SUPABASE_SERVICE_ROLE_KEY = 'service_role_key';
+} else {
+  console.log('[DB Env Check]', {
+    urlSet: Boolean(process.env.SUPABASE_URL),
+    serviceRoleKeySet: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+  });
+}
+
+const supabase = createClient(
+  process.env.SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+);
 
 const toSeconds = (value?: number): number => {
   if (typeof value === 'number' && Number.isFinite(value)) {
@@ -56,17 +69,14 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    await pool.query(
-      `insert into usage_logs (user_id, account, operation, page_data, created_at)
-       values ($1, $2, $3, $4, to_timestamp($5))`,
-      [
-        userId || null,
-        account || null,
-        operation,
-        pageData || {},
-        toSeconds(timestamp),
-      ]
-    );
+    const { error } = await supabase.from('usage_logs').insert({
+      user_id: userId || null,
+      account: account || null,
+      operation,
+      page_data: pageData ?? null,
+      created_at: new Date(toSeconds(timestamp) * 1000).toISOString(),
+    });
+    if (error) throw error;
     return res.status(200).json({ ok: true });
   } catch (error) {
     console.error('insert failed', error);
