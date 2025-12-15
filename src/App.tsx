@@ -678,7 +678,7 @@ const App: React.FC = () => {
           />
         )}
 
-        {/* 赞赏支持弹窗（仅在有结果时使用更明显按钮触发） */}
+        {/* 赞赏支持弹窗 */}
         {showSupport && (
           <div className="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4 relative">

@@ -23,6 +23,9 @@ data/Users_data/*.json
 # Example data (can be committed)
 !data/examples/
 
+# Local-only resume / notes (do not push)
+PROJECT_RESUME.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
