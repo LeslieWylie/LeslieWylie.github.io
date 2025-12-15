@@ -1,4 +1,4 @@
-export type UsageOperation = 'generatePrompt' | 'uploadResult' | 'loadHistory' | 'view';
+export type UsageOperation = 'generatePrompt' | 'uploadResult' | 'loadHistory' | 'view' | 'feedback';
 
 export interface UsageEvent {
   userId?: string;

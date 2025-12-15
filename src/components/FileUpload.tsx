@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { Upload, FileText, AlertCircle, CheckCircle, Type, FileUp } from 'lucide-react';
+import { Upload, FileText, AlertCircle, CheckCircle, Type, FileUp, Sparkles } from 'lucide-react';
 import { LifeDestinyResult, KLinePoint, TimelinePoint } from '../types';
 import { validateLifeDestinyResult, getValidationErrors } from '../utils/validation';
+import exampleResult from '../../data/examples/result-converted.json';
 
 interface FileUploadProps {
   onUpload: (data: LifeDestinyResult) => void;
@@ -170,6 +171,12 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
             (typeof raw.summary.dimensions.family === 'number' ? raw.summary.dimensions.family : undefined)
           ),
         },
+        v3Extras: {
+          summaryOverview: raw.summary?.overview,
+          futureFocus: raw.future_focus,
+          share: raw.share,
+          profile: raw.profile,
+        },
       };
     }
     
@@ -330,6 +337,16 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
     setIsDragging(false);
   };
 
+  // 一键体验示例数据
+  const handleUseExample = () => {
+    try {
+      const text = JSON.stringify(exampleResult);
+      processJsonData(text);
+    } catch (err) {
+      setError('加载示例数据失败，请稍后重试');
+    }
+  };
+
   return (
     <div className="w-full max-w-md">
       {/* 模式切换标签 */}
@@ -412,6 +429,15 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
               <FileText className="w-4 h-4" />
               <span>支持 .json 格式</span>
             </div>
+
+            <button
+              type="button"
+              onClick={handleUseExample}
+              className="mt-4 inline-flex items-center gap-2 text-xs text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-full border border-indigo-100"
+            >
+              <Sparkles className="w-3 h-3" />
+              <span>没有结果文件？先体验示例命盘效果</span>
+            </button>
           </div>
         </div>
       )}

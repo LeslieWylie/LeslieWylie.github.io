@@ -57,9 +57,9 @@ const HelpPage: React.FC<HelpPageProps> = ({ onClose }) => {
               </p>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="bg-gray-50 p-4 rounded-lg space-y-2">
               <h4 className="font-bold text-gray-800 mb-2">如何获取我的八字？</h4>
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-sm text-gray-600">
                 您可以使用以下方式获取八字信息：
               </p>
               <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
@@ -67,6 +67,33 @@ const HelpPage: React.FC<HelpPageProps> = ({ onClose }) => {
                 <li>咨询专业的命理师</li>
                 <li>使用在线八字排盘网站</li>
               </ul>
+              <div className="mt-2 bg-white border border-dashed border-indigo-200 rounded-lg p-3 space-y-1">
+                <p className="text-xs font-semibold text-indigo-700">✅ 推荐在线排盘网站：</p>
+                <ul className="text-xs text-indigo-700 space-y-1 list-disc list-inside">
+                  <li>
+                    <a
+                      href="https://bazi.goodsoul.live/paipan"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline font-medium"
+                    >
+                      好心灵八字排盘
+                    </a>
+                    （界面简洁，支持国内外时区）
+                  </li>
+                  <li>
+                    <a
+                      href="https://dao.qbb.me/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline font-medium"
+                    >
+                      轻便版在线排盘（dao.qbb.me）
+                    </a>
+                    （快速查看四柱干支）
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg">

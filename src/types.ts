@@ -198,6 +198,13 @@ export interface LifeDestinyResult {
   analysis: AnalysisData; // 兼容旧格式
   // V2 格式的扩展数据（可选）
   v2Data?: LifeDestinyResultV2;
+  // V3 扩展信息（当前主要用于前端展示，不参与严格验证）
+  v3Extras?: {
+    summaryOverview?: any;
+    futureFocus?: any;
+    share?: any;
+    profile?: any;
+  };
   // 用户姓名（用于显示）
   userName?: string;
 }

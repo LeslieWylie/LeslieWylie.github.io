@@ -10,6 +10,7 @@ interface PromptDisplayProps {
 const PromptDisplay: React.FC<PromptDisplayProps> = ({ systemPrompt, userPrompt, onClose }) => {
   const [copiedSystem, setCopiedSystem] = useState(false);
   const [copiedUser, setCopiedUser] = useState(false);
+  const [copiedAll, setCopiedAll] = useState(false);
   const [selectedAI, setSelectedAI] = useState<'gemini' | 'doubao'>('gemini');
 
   const copyToClipboard = (text: string, type: 'system' | 'user') => {
@@ -29,9 +30,11 @@ const PromptDisplay: React.FC<PromptDisplayProps> = ({ systemPrompt, userPrompt,
     navigator.clipboard.writeText(fullText).then(() => {
       setCopiedSystem(true);
       setCopiedUser(true);
+      setCopiedAll(true);
       setTimeout(() => {
         setCopiedSystem(false);
         setCopiedUser(false);
+        setCopiedAll(false);
       }, 2000);
     });
   };
@@ -126,29 +129,11 @@ const PromptDisplay: React.FC<PromptDisplayProps> = ({ systemPrompt, userPrompt,
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {/* System Prompt */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {/* System Prompt */}
+            <div className="space-y-3">
               <h3 className="text-lg font-bold text-indigo-600">第一步：系统角色设定</h3>
-              <button
-                onClick={() => copyToClipboard(systemPrompt, 'system')}
-                className="flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors text-sm font-medium"
-              >
-                {copiedSystem ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    已复制
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    复制
-                  </>
-                )}
-              </button>
-            </div>
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <pre className="whitespace-pre-wrap text-sm text-gray-700 font-mono overflow-x-auto">
                 {systemPrompt}
@@ -161,25 +146,7 @@ const PromptDisplay: React.FC<PromptDisplayProps> = ({ systemPrompt, userPrompt,
 
           {/* User Prompt */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-emerald-600">第二步：用户提示词</h3>
-              <button
-                onClick={() => copyToClipboard(userPrompt, 'user')}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors text-sm font-medium"
-              >
-                {copiedUser ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    已复制
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    复制
-                  </>
-                )}
-              </button>
-            </div>
+            <h3 className="text-lg font-bold text-emerald-600">第二步：用户提示词</h3>
             <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
               <pre className="whitespace-pre-wrap text-sm text-gray-700 font-mono overflow-x-auto">
                 {userPrompt}
@@ -188,22 +155,64 @@ const PromptDisplay: React.FC<PromptDisplayProps> = ({ systemPrompt, userPrompt,
             <p className="text-sm text-gray-500">
               💡 等待 Gemini 确认系统角色后，再发送此提示词
             </p>
-          </div>
+            </div>
 
-          {/* 一键复制所有内容 */}
-          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200">
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="font-bold text-indigo-900">一键复制完整对话</h4>
+          {/* 复制区域：分开复制 + 一键复制 */}
+          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200 space-y-3">
+            <h4 className="font-bold text-indigo-900 mb-1">复制 Prompt</h4>
+            <div className="flex flex-col md:flex-row gap-2">
+              <button
+                onClick={() => copyToClipboard(systemPrompt, 'system')}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-white text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors text-sm font-semibold"
+              >
+                {copiedSystem ? (
+                  <>
+                    <Check className="w-4 h-4" />
+                    系统角色已复制
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    复制系统角色设定
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => copyToClipboard(userPrompt, 'user')}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-white text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-50 transition-colors text-sm font-semibold"
+              >
+                {copiedUser ? (
+                  <>
+                    <Check className="w-4 h-4" />
+                    用户提示词已复制
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    复制用户提示词
+                  </>
+                )}
+              </button>
               <button
                 onClick={copyAllPrompt}
-                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-semibold"
               >
-                <Copy className="w-4 h-4" />
-                复制全部
+                {copiedAll ? (
+                  <>
+                    <Check className="w-4 h-4" />
+                    已复制全部
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    一键复制完整对话
+                  </>
+                )}
               </button>
             </div>
             <p className="text-xs text-indigo-700">
-              💡 点击按钮可一次性复制系统角色设定和用户提示词，方便快速发送给 AI
+              建议先复制<strong>系统角色设定</strong>并发送给 AI，确认无误后再复制<strong>用户提示词</strong>。
+              也可以使用<strong>一键复制完整对话</strong>快速粘贴。
             </p>
           </div>
 
