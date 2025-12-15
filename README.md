@@ -91,23 +91,16 @@ npm run build
 
 构建产物将输出到 `dist` 目录。
 
-### （可选）启用使用日志/数据库埋点
+### （可选）启用使用日志/数据库埋点（Supabase）
 
-1. 后端准备一个接收 `POST /log` 的接口（可用 Serverless + 数据库，如 Cloudflare Workers + Supabase/Postgres）。接收 JSON 结构：
-   ```json
-   {
-     "userId": "string",
-     "account": "string",
-     "operation": "generatePrompt | uploadResult | loadHistory | view",
-     "pageData": { "任意补充字段": "..." },
-     "timestamp": 1710000000000
-   }
-   ```
-2. 在本地或部署环境设置环境变量（Vite 格式）：
-   ```bash
-   VITE_LOG_ENDPOINT=https://your-log-endpoint.example.com/log
-   ```
-3. 前端会在生成 Prompt、上传结果、加载历史时自动上报。未配置 `VITE_LOG_ENDPOINT` 时不会发送请求。
+- 环境变量（部署时配置）：
+  - `SUPABASE_URL`：Supabase Project URL（如 `https://xxxx.supabase.co`）
+  - `SUPABASE_SERVICE_ROLE_KEY`：Supabase `service_role` 密钥（仅后端函数使用）
+  - `VITE_LOG_ENDPOINT`：前端埋点上报地址，指向部署后的 `/api/log`
+- 后端接口：`/api/log`（Vercel Function，使用 supabase-js 写入表 `usage_logs`）
+  - 请求体：`{ userId?, account?, operation, pageData?, timestamp? }`
+  - 表字段：`id, user_id, account, operation, page_data(jsonb), created_at`
+- 前端埋点：`src/services/usageLogger.ts` 在生成 Prompt、上传结果、加载历史等操作时自动上报。
 
 ---
 
@@ -342,8 +335,9 @@ lifekline/
 
 ## 👤 作者
 
-- 项目地址：[GitHub](https://github.com/your-username/lifekline)
-- 问题反馈：[Issues](https://github.com/your-username/lifekline/issues)
+- 项目地址：[GitHub](https://github.com/LeslieWylie/LeslieWylie.github.io)
+- 在线演示：[lesliewylie.github.io](https://lesliewylie.github.io)
+- 问题反馈：[Issues](https://github.com/LeslieWylie/LeslieWylie.github.io/issues)
 
 ---
 

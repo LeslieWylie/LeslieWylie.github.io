@@ -1,20 +1,27 @@
 {
-  "name": "life-k-line",
-  "private": true,
+  "name": "lifekline",
   "version": "1.0.0",
+  "private": true,
+  "description": "人生 K 线｜基于八字命理和 K 线图的人生运势可视化应用（Life Destiny K-Line）",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeslieWylie/LeslieWylie.github.io.git"
+  },
+  "homepage": "https://lesliewylie.github.io/",
+  "author": "Leslie Wylie",
+  "license": "MIT",
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@supabase/supabase-js": "^2.45.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.4",
     "lucide-react": "^0.561.0",
-    "pg": "^8.11.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.68.0",
@@ -26,7 +33,6 @@
     "@types/node": "^22.9.3",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/pg": "^8.6.6",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
