@@ -13,6 +13,7 @@ import HistoryPanel from './components/HistoryPanel';
 import ExportButton from './components/ExportButton';
 import { BaziInput, LifeDestinyResult } from './types';
 import { generateGeminiPrompt } from './services/promptGenerator';
+import { logUsage } from './services/usageLogger';
 import { useToast } from './hooks/useToast';
 import { saveToHistory } from './utils/storage';
 import { Sparkles, History, HelpCircle, Github, ExternalLink } from 'lucide-react';
@@ -42,6 +43,22 @@ const App: React.FC = () => {
       setShowPrompt(true);
       setUserName(data.name || `${data.birthYear}年 ${data.yearPillar} ${data.monthPillar} ${data.dayPillar} ${data.hourPillar}`);
       toast.success('Prompt 生成成功！');
+
+      logUsage({
+        userId: data.name || undefined,
+        account: data.name || undefined,
+        operation: 'generatePrompt',
+        pageData: {
+          birthYear: data.birthYear,
+          pillars: {
+            year: data.yearPillar,
+            month: data.monthPillar,
+            day: data.dayPillar,
+            hour: data.hourPillar,
+          },
+          promptType: data.promptType,
+        },
+      });
     } catch (error) {
       console.error('加载 Prompt 失败:', error);
       toast.error('加载 Prompt 失败，请刷新页面重试');
@@ -66,6 +83,25 @@ const App: React.FC = () => {
       saveToHistory(baziInput, data);
     }
     
+    logUsage({
+      userId: data.userName || extractedName || undefined,
+      account: data.userName || extractedName || undefined,
+      operation: 'uploadResult',
+      pageData: {
+        chartPoints: data.chartData?.length ?? 0,
+        hasV2Data: Boolean(data.v2Data),
+        baziInput: baziInput
+          ? {
+              birthYear: baziInput.birthYear,
+              year: baziInput.yearPillar,
+              month: baziInput.monthPillar,
+              day: baziInput.dayPillar,
+              hour: baziInput.hourPillar,
+            }
+          : undefined,
+      },
+    });
+
     toast.success('数据加载成功！');
   };
 
@@ -73,6 +109,20 @@ const App: React.FC = () => {
     setBaziInput(baziInput);
     setUserName(baziInput.name || `${baziInput.birthYear}年 ${baziInput.yearPillar} ${baziInput.monthPillar} ${baziInput.dayPillar} ${baziInput.hourPillar}`);
     
+    logUsage({
+      userId: baziInput.name || undefined,
+      account: baziInput.name || undefined,
+      operation: 'loadHistory',
+      pageData: {
+        birthYear: baziInput.birthYear,
+        year: baziInput.yearPillar,
+        month: baziInput.monthPillar,
+        day: baziInput.dayPillar,
+        hour: baziInput.hourPillar,
+        hasResult: Boolean(result),
+      },
+    });
+
     if (result) {
       setResult(result);
       toast.success('历史记录加载成功！');

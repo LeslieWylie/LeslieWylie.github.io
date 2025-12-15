@@ -91,6 +91,24 @@ npm run build
 
 构建产物将输出到 `dist` 目录。
 
+### （可选）启用使用日志/数据库埋点
+
+1. 后端准备一个接收 `POST /log` 的接口（可用 Serverless + 数据库，如 Cloudflare Workers + Supabase/Postgres）。接收 JSON 结构：
+   ```json
+   {
+     "userId": "string",
+     "account": "string",
+     "operation": "generatePrompt | uploadResult | loadHistory | view",
+     "pageData": { "任意补充字段": "..." },
+     "timestamp": 1710000000000
+   }
+   ```
+2. 在本地或部署环境设置环境变量（Vite 格式）：
+   ```bash
+   VITE_LOG_ENDPOINT=https://your-log-endpoint.example.com/log
+   ```
+3. 前端会在生成 Prompt、上传结果、加载历史时自动上报。未配置 `VITE_LOG_ENDPOINT` 时不会发送请求。
+
 ---
 
 ## 📖 使用指南

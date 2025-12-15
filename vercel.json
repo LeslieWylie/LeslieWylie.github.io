@@ -1,0 +1,11 @@
+{
+  "builds": [
+    { "src": "api/log.ts", "use": "@vercel/node" },
+    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } }
+  ],
+  "routes": [
+    { "src": "/api/log", "dest": "/api/log.ts" },
+    { "src": "/(.*)", "dest": "/dist/$1" }
+  ]
+}
+
