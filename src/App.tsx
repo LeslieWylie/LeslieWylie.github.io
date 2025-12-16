@@ -637,14 +637,29 @@ const App: React.FC = () => {
               </section>
 
               {/* 轻量反馈入口 */}
-              <section className="pt-4 border-t border-gray-100 flex justify-end">
-                <button
-                  type="button"
-                  onClick={handleSendFeedback}
-                  className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 px-3 py-1.5 rounded-full border border-gray-200"
+              <section className="pt-6 border-t border-gray-100 flex justify-end">
+                <a
+                  href="https://v.wjx.cn/vm/e7TP0At.aspx#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-rose-500 hover:from-indigo-600 hover:to-rose-600 shadow-lg shadow-rose-200/50 px-4 py-2.5 rounded-full transition-all"
+                  onClick={() =>
+                    logUsage({
+                      userId: baziInput?.name || userName || undefined,
+                      account: baziInput?.name || userName || undefined,
+                      operation: 'feedback',
+                      pageData: {
+                        type: 'wjx',
+                        url: 'https://v.wjx.cn/vm/e7TP0At.aspx#',
+                        hasResult: Boolean(result),
+                        timestamp: new Date().toISOString(),
+                      },
+                    })
+                  }
                 >
-                  <span>对本次报告有想法？点此反馈</span>
-                </button>
+                  <ExternalLink className="w-4 h-4" />
+                  <span>对本次报告有想法？点此填写问卷</span>
+                </a>
               </section>
             </div>
           )}
