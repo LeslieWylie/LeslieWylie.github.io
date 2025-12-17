@@ -5,7 +5,7 @@ export enum Gender {
 }
 
 // Prompt类型
-export type PromptType = 'default' | 'detailed' | 'custom' | 'detailed_v2' | 'detailed_v3';
+export type PromptType = 'default' | 'detailed' | 'custom' | 'detailed_v2' | 'detailed_v3' | 'detailed_v4';
 
 // 简化的用户输入（不包含API配置）
 export interface BaziInput {
@@ -192,6 +192,61 @@ export interface AnalysisData {
   familyScore: number; // 0-10
 }
 
+// V4 格式的命理逻辑分析
+export interface BaziLogic {
+  essence: string; // 日主特性与调候深度分析
+  hidden_virtuality: string; // 虚神推导过程与结果
+  system_validation: string; // 格局与用神多角度交叉结论
+  mang_pai_work: string; // 体用派系划分及地支做功详述
+  destiny_story: string; // 象法化的人生描述
+  comprehensive_stats: {
+    appearance: string; // 形象描述
+    mission: string; // 天赋使命
+    wealth_cap: string; // 财富量级与上限
+    marriage_fate: string; // 感情宿命论断
+  };
+}
+
+// V4 格式的历史验证点
+export interface HistoryCheckpoint {
+  year: number;
+  event: string;
+  logic: string; // 命理学应期解释
+}
+
+// V4 格式的评分
+export interface V4Scores {
+  summary: number; // 0-10
+  career: number; // 0-10
+  wealth: number; // 0-10
+  marriage: number; // 0-10
+  health: number; // 0-10
+}
+
+// V4 格式的 K线数据点
+export interface V4ChartPoint {
+  age: number;
+  year: number;
+  daYun: string; // 当前大运
+  ganZhi: string; // 流年干支
+  k_line: {
+    open: number; // 0-100
+    close: number; // 0-100
+    high: number; // 0-100
+    low: number; // 0-100
+  };
+  score: number; // 0-100
+  reason: string; // 100字详批
+}
+
+// V4 格式的完整结果
+export interface LifeDestinyResultV4 {
+  bazi_logic: BaziLogic;
+  history_checkpoints: HistoryCheckpoint[];
+  scores: V4Scores;
+  chartPoints: V4ChartPoint[];
+}
+
 // 统一的结果接口（兼容新旧格式）
 export interface LifeDestinyResult {
   chartData: KLinePoint[]; // 统一转换为 KLinePoint 格式
@@ -205,6 +260,8 @@ export interface LifeDestinyResult {
     share?: any;
     profile?: any;
   };
+  // V4 扩展信息
+  v4Extras?: LifeDestinyResultV4;
   // 用户姓名（用于显示）
   userName?: string;
 }

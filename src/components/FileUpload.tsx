@@ -18,6 +18,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
   const [jsonText, setJsonText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [validationDetails, setValidationDetails] = useState<string[]>([]);
 
   // 清理 bazi 数组中的标注
@@ -108,8 +109,71 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
     };
   };
 
-  // 转换 Gemini 返回的格式为项目所需格式（支持 V1、V2 和 V3）
+  // 从 V4 格式的 chartPoints 转换为 KLinePoint
+  const convertV4ChartPointsToKLinePoints = (chartPoints: any[]): KLinePoint[] => {
+    return chartPoints.map((point) => ({
+      age: point.age || 0,
+      year: point.year || 0,
+      ganZhi: point.ganZhi || '',
+      daYun: point.daYun || '',
+      open: point.k_line?.open ?? point.open ?? 50,
+      close: point.k_line?.close ?? point.close ?? 50,
+      high: point.k_line?.high ?? point.high ?? 50,
+      low: point.k_line?.low ?? point.low ?? 50,
+      score: point.score ?? point.k_line?.close ?? 50,
+      reason: point.reason || '',
+    }));
+  };
+
+  // 从 V4 格式的 scores 转换为 AnalysisData
+  const convertV4ScoresToAnalysis = (scores: any, baziLogic: any): any => {
+    // 尝试从 bazi_logic 中提取 bazi 信息（如果存在）
+    let baziArray: string[] = [];
+    // V4 格式可能不直接包含 bazi 数组，需要从其他地方获取或留空
+    while (baziArray.length < 4) {
+      baziArray.push('');
+    }
+
+    return {
+      bazi: baziArray,
+      summary: baziLogic?.destiny_story || baziLogic?.essence || "无摘要",
+      summaryScore: normalizeScore(scores?.summary),
+      industry: baziLogic?.comprehensive_stats?.mission || "无",
+      industryScore: normalizeScore(scores?.career),
+      wealth: baziLogic?.comprehensive_stats?.wealth_cap || "无",
+      wealthScore: normalizeScore(scores?.wealth),
+      marriage: baziLogic?.comprehensive_stats?.marriage_fate || "无",
+      marriageScore: normalizeScore(scores?.marriage),
+      health: "健康分析",
+      healthScore: normalizeScore(scores?.health),
+      family: "六亲分析",
+      familyScore: 5, // V4 格式没有 family 分数，使用默认值
+    };
+  };
+
+  // 转换 Gemini 返回的格式为项目所需格式（支持 V1、V2、V3 和 V4）
   const convertGeminiResult = (raw: any): LifeDestinyResult => {
+    // 检查是否是 V4 格式（有 bazi_logic 和 chartPoints 中 k_line 字段）
+    if (raw.bazi_logic && Array.isArray(raw.chartPoints) && raw.chartPoints.length > 0) {
+      const firstPoint = raw.chartPoints[0];
+      if (firstPoint.k_line || (firstPoint.open === undefined && firstPoint.k_line)) {
+        // V4 格式
+        const chartData = convertV4ChartPointsToKLinePoints(raw.chartPoints);
+        const analysis = convertV4ScoresToAnalysis(raw.scores, raw.bazi_logic);
+
+        return {
+          chartData,
+          analysis,
+          v4Extras: {
+            bazi_logic: raw.bazi_logic,
+            history_checkpoints: Array.isArray(raw.history_checkpoints) ? raw.history_checkpoints : [],
+            scores: raw.scores || {},
+            chartPoints: raw.chartPoints,
+          },
+        };
+      }
+    }
+
     // 检查是否是 V2 格式（有 timeline 字段）
     if (raw.timeline && Array.isArray(raw.timeline)) {
       // V2 格式
@@ -233,13 +297,14 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
     try {
       const rawData = JSON.parse(text);
 
-      // 验证数据格式（支持 V1、V2 和 V3）
+      // 验证数据格式（支持 V1、V2、V3 和 V4）
+      const isV4Format = rawData.bazi_logic && Array.isArray(rawData.chartPoints) && rawData.chartPoints.length > 0;
       const isV2Format = rawData.timeline && Array.isArray(rawData.timeline);
       const isV3Format = rawData.profile && rawData.summary && rawData.summary.dimensions;
       const isV1Format = (rawData.chartPoints || rawData.chartData) && Array.isArray(rawData.chartPoints || rawData.chartData);
       
-      if (!isV2Format && !isV3Format && !isV1Format) {
-        setError('JSON 格式不正确：缺少 timeline、profile/summary.dimensions、chartPoints 或 chartData 字段');
+      if (!isV4Format && !isV2Format && !isV3Format && !isV1Format) {
+        setError('JSON 格式不正确：缺少 bazi_logic、timeline、profile/summary.dimensions、chartPoints 或 chartData 字段');
         return;
       }
 
@@ -270,14 +335,20 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
         return;
       }
 
-      if (convertedData.chartData.length !== 100) {
+      // 对于 V4 格式，可能只返回部分数据（如前 20 年），这是正常的
+      const isV4Partial = convertedData.v4Extras && convertedData.chartData.length < 100;
+      if (convertedData.chartData.length !== 100 && !isV4Partial) {
         setError(`警告：数据点数量为 ${convertedData.chartData.length}，期望 100 个。将继续加载...`);
+      } else if (isV4Partial) {
+        // V4 格式分段输出，给出友好提示
+        setSuccessMessage(`已加载 ${convertedData.chartData.length} 年数据（V4 格式支持分段输出，可在后续对话中继续生成剩余年份）`);
       }
 
       setSuccess(true);
       setTimeout(() => {
         onUpload(convertedData);
         setSuccess(false);
+        setSuccessMessage(null);
         // 清空文本输入
         if (uploadMode === 'text') {
           setJsonText('');
@@ -421,7 +492,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
                 </button>
               </p>
               <p className="text-xs text-gray-400 mt-2">
-                支持 V1、V2 和 V3 格式
+                支持 V1、V2、V3 和 V4 格式
               </p>
             </div>
 
@@ -458,7 +529,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
               spellCheck={false}
             />
             <p className="text-xs text-gray-400 mt-2">
-              支持 V1、V2 和 V3 格式，支持格式化或压缩的 JSON
+              支持 V1、V2、V3 和 V4 格式，支持格式化或压缩的 JSON
             </p>
           </div>
           <button
@@ -493,7 +564,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
       {success && (
         <div className="mt-4 flex items-center gap-2 text-green-600 bg-green-50 px-4 py-3 rounded-lg border border-green-100">
           <CheckCircle className="w-5 h-5 flex-shrink-0" />
-          <p className="text-sm font-medium">文件上传成功，正在加载数据...</p>
+          <p className="text-sm font-medium">
+            {successMessage || '文件上传成功，正在加载数据...'}
+          </p>
         </div>
       )}
     </div>

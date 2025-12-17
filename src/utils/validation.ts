@@ -36,7 +36,7 @@ export const baziInputSchema = z.object({
       return !isNaN(age) && age >= 1 && age <= 100;
     }, { message: '起运年龄应在 1-100 之间' }),
   firstDaYun: ganZhiSchema,
-  promptType: z.enum(['default', 'detailed', 'detailed_v2', 'detailed_v3', 'custom']).optional(),
+  promptType: z.enum(['default', 'detailed', 'detailed_v2', 'detailed_v3', 'detailed_v4', 'custom']).optional(),
   customPrompt: z.string().optional(),
 });
 
@@ -73,7 +73,7 @@ export const analysisDataSchema = z.object({
 
 // 完整结果验证 Schema
 export const lifeDestinyResultSchema = z.object({
-  chartData: z.array(kLinePointSchema).length(100),
+  chartData: z.array(kLinePointSchema).min(1, '至少需要 1 个数据点'), // 允许少于 100 个数据点（支持 V4 格式的分段输出）
   analysis: analysisDataSchema,
 });
 

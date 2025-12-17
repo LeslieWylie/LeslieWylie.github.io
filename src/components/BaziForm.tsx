@@ -405,10 +405,11 @@ const BaziForm: React.FC<BaziFormProps> = ({ onGeneratePrompt }) => {
                 {...register('promptType')}
                 className="w-full px-3 py-2 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 outline-none bg-white text-sm"
               >
-                <option value="default">默认 Prompt（标准版）</option>
+                <option value="default">默认 Prompt（标准版） ⭐最准⭐</option>
                 <option value="detailed">详细 Prompt（深入分析）</option>
                 <option value="detailed_v2">详细 Prompt V2（全息数据版）⭐</option>
                 <option value="detailed_v3">详细 Prompt V3（精准逻辑版）⭐</option>
+                <option value="detailed_v4">详细 Prompt V4（全维度深度版）⭐</option>
                 <option value="custom">自定义 Prompt</option>
               </select>
               <ErrorMessage field="promptType" />

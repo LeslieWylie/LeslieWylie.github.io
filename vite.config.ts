@@ -16,8 +16,8 @@ export default defineConfig(({ mode }) => {
     root: '.',
     publicDir: 'public',
     server: {
-      host: '0.0.0.0', // 允许外部访问
-      port: 5173,
+      host: 'localhost', // 使用 localhost 避免权限问题
+      port: 3000, // 使用 3000 端口
       strictPort: false, // 如果端口被占用，尝试下一个可用端口
       open: true, // 自动打开浏览器
     },

@@ -592,6 +592,118 @@ const App: React.FC = () => {
                 </section>
               )}
 
+              {/* V4 格式：命理逻辑分析 */}
+              {result.v4Extras?.bazi_logic && (
+                <section className="bg-white rounded-xl border border-purple-100 shadow-sm p-5 space-y-4">
+                  <h3 className="text-sm md:text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                    <span className="w-1 h-5 bg-purple-600 rounded-full"></span>
+                    深度命理分析
+                  </h3>
+                  
+                  {/* 日主本原 */}
+                  {result.v4Extras.bazi_logic.essence && (
+                    <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 space-y-1">
+                      <p className="text-xs font-semibold text-purple-800 mb-1">日主本原</p>
+                      <p className="text-xs text-gray-700 leading-relaxed">{result.v4Extras.bazi_logic.essence}</p>
+                    </div>
+                  )}
+
+                  {/* 虚神补全 */}
+                  {result.v4Extras.bazi_logic.hidden_virtuality && (
+                    <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 space-y-1">
+                      <p className="text-xs font-semibold text-blue-800 mb-1">虚神补全</p>
+                      <p className="text-xs text-gray-700 leading-relaxed">{result.v4Extras.bazi_logic.hidden_virtuality}</p>
+                    </div>
+                  )}
+
+                  {/* 格局用神 */}
+                  {result.v4Extras.bazi_logic.system_validation && (
+                    <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-3 space-y-1">
+                      <p className="text-xs font-semibold text-emerald-800 mb-1">格局用神</p>
+                      <p className="text-xs text-gray-700 leading-relaxed">{result.v4Extras.bazi_logic.system_validation}</p>
+                    </div>
+                  )}
+
+                  {/* 盲派做功 */}
+                  {result.v4Extras.bazi_logic.mang_pai_work && (
+                    <div className="bg-orange-50 border border-orange-100 rounded-lg p-3 space-y-1">
+                      <p className="text-xs font-semibold text-orange-800 mb-1">盲派做功</p>
+                      <p className="text-xs text-gray-700 leading-relaxed">{result.v4Extras.bazi_logic.mang_pai_work}</p>
+                    </div>
+                  )}
+
+                  {/* 象法取象 */}
+                  {result.v4Extras.bazi_logic.destiny_story && (
+                    <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-3 space-y-1">
+                      <p className="text-xs font-semibold text-indigo-800 mb-1">象法取象</p>
+                      <p className="text-xs text-gray-700 leading-relaxed">{result.v4Extras.bazi_logic.destiny_story}</p>
+                    </div>
+                  )}
+
+                  {/* 深度综合 */}
+                  {result.v4Extras.bazi_logic.comprehensive_stats && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                      {result.v4Extras.bazi_logic.comprehensive_stats.appearance && (
+                        <div className="bg-gray-50 border border-gray-100 rounded-lg p-3">
+                          <p className="text-xs font-semibold text-gray-800 mb-1">外在形象</p>
+                          <p className="text-xs text-gray-700">{result.v4Extras.bazi_logic.comprehensive_stats.appearance}</p>
+                        </div>
+                      )}
+                      {result.v4Extras.bazi_logic.comprehensive_stats.mission && (
+                        <div className="bg-gray-50 border border-gray-100 rounded-lg p-3">
+                          <p className="text-xs font-semibold text-gray-800 mb-1">天赋使命</p>
+                          <p className="text-xs text-gray-700">{result.v4Extras.bazi_logic.comprehensive_stats.mission}</p>
+                        </div>
+                      )}
+                      {result.v4Extras.bazi_logic.comprehensive_stats.wealth_cap && (
+                        <div className="bg-gray-50 border border-gray-100 rounded-lg p-3">
+                          <p className="text-xs font-semibold text-gray-800 mb-1">财富量级</p>
+                          <p className="text-xs text-gray-700">{result.v4Extras.bazi_logic.comprehensive_stats.wealth_cap}</p>
+                        </div>
+                      )}
+                      {result.v4Extras.bazi_logic.comprehensive_stats.marriage_fate && (
+                        <div className="bg-gray-50 border border-gray-100 rounded-lg p-3">
+                          <p className="text-xs font-semibold text-gray-800 mb-1">感情宿命</p>
+                          <p className="text-xs text-gray-700">{result.v4Extras.bazi_logic.comprehensive_stats.marriage_fate}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </section>
+              )}
+
+              {/* V4 格式：历史验证点 */}
+              {Array.isArray(result.v4Extras?.history_checkpoints) && 
+               result.v4Extras.history_checkpoints.length > 0 && (
+                <section className="bg-white rounded-xl border border-amber-100 shadow-sm p-5 space-y-3">
+                  <h3 className="text-sm md:text-base font-bold text-gray-800 mb-2 flex items-center gap-2">
+                    <span className="w-1 h-5 bg-amber-600 rounded-full"></span>
+                    历史验证节点
+                  </h3>
+                  <div className="space-y-2">
+                    {result.v4Extras.history_checkpoints.map((checkpoint: any, index: number) => (
+                      <div
+                        key={`${checkpoint.year}-${index}`}
+                        className="flex items-start gap-3 p-3 rounded-lg border border-amber-100 bg-amber-50/50 hover:border-amber-200 hover:bg-amber-50 transition-colors"
+                      >
+                        <div className="flex-shrink-0 w-16 text-center">
+                          <div className="text-sm font-bold text-amber-700">{checkpoint.year}</div>
+                          <div className="text-[10px] text-amber-600">年</div>
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          {checkpoint.event && (
+                            <p className="text-xs font-semibold text-gray-800">{checkpoint.event}</p>
+                          )}
+                          {checkpoint.logic && (
+                            <p className="text-xs text-gray-600 leading-relaxed">{checkpoint.logic}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
               {/* Enhanced K-Line Chart */}
               <section className="space-y-4" data-export-chart>
                 <h3 className="text-xl font-bold text-gray-700 flex items-center gap-2">
