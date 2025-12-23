@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import BaziForm from './components/BaziForm';
 import EnhancedKLineChart from './components/EnhancedKLineChart';
 import AnalysisResult from './components/AnalysisResult';
 import StatisticsPanel from './components/StatisticsPanel';
 import DimensionComparisonChart from './components/DimensionComparisonChart';
+import MultiDimensionKLineChart from './components/MultiDimensionKLineChart';
 import PromptDisplay from './components/PromptDisplay';
 import FileUpload from './components/FileUpload';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -11,6 +12,7 @@ import ToastContainer from './components/ToastContainer';
 import ErrorBoundary from './components/ErrorBoundary';
 import HistoryPanel from './components/HistoryPanel';
 import ExportButton from './components/ExportButton';
+import AnnouncementModal from './components/AnnouncementModal';
 import { BaziInput, LifeDestinyResult } from './types';
 import { generateGeminiPrompt } from './services/promptGenerator';
 import { logUsage } from './services/usageLogger';
@@ -19,6 +21,8 @@ import { saveToHistory } from './utils/storage';
 import { Sparkles, History, HelpCircle, Github, ExternalLink, ExternalLinkIcon, HeartHandshake, X } from 'lucide-react';
 import HelpPage from './components/HelpPage';
 import supportImg from '../money.png';
+
+const ANNOUNCEMENT_VERSION = 'multi-dimension-kline-v1';
 
 const App: React.FC = () => {
   const [result, setResult] = useState<LifeDestinyResult | null>(null);
@@ -30,7 +34,32 @@ const App: React.FC = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showSupport, setShowSupport] = useState(false);
+  const [showAnnouncement, setShowAnnouncement] = useState(false);
   const toast = useToast();
+
+  // 首次进入时显示版本更新公告（多维度K线）
+  useEffect(() => {
+    try {
+      if (typeof window === 'undefined') return;
+      const seenVersion = window.localStorage.getItem('announcement_version');
+      if (seenVersion !== ANNOUNCEMENT_VERSION) {
+        setShowAnnouncement(true);
+      }
+    } catch {
+      // 忽略 localStorage 异常，避免阻塞页面
+    }
+  }, []);
+
+  const handleAnnouncementClose = () => {
+    try {
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('announcement_version', ANNOUNCEMENT_VERSION);
+      }
+    } catch {
+      // 忽略 localStorage 异常
+    }
+    setShowAnnouncement(false);
+  };
 
   // 推导当前步骤：1 填写八字，2 生成并复制 Prompt，3 上传/查看结果
   const currentStep = (() => {
@@ -718,6 +747,24 @@ const App: React.FC = () => {
                 <EnhancedKLineChart data={result.chartData} userName={result.userName || userName} />
               </section>
 
+              {/* Multi-dimension K-Line Chart */}
+              <section className="space-y-4" data-export-chart>
+                <h3 className="text-xl font-bold text-gray-700 flex items-center gap-2">
+                  <span className="w-1 h-6 bg-purple-600 rounded-full"></span>
+                  各维度人生K线走势（财富 / 感情 / 事业 / 健康 / 六亲）
+                </h3>
+                <p className="text-sm text-gray-500 mb-2">
+                  在整体流年走势的基础上，对
+                  <span className="font-semibold text-indigo-600"> 总评、事业、财富、感情、健康、六亲 </span>
+                  等维度进行拆分，帮助你从多个角度观察不同年龄段的侧重点。
+                </p>
+                <MultiDimensionKLineChart
+                  data={result.chartData}
+                  analysis={result.analysis}
+                  userName={result.userName || userName}
+                />
+              </section>
+
               {/* Bazi Pillars - 四柱信息 */}
               <section className="animate-fade-in">
                 <div className="flex justify-center gap-2 md:gap-8 bg-gray-900 text-amber-50 p-6 rounded-xl shadow-lg overflow-x-auto">
@@ -851,6 +898,9 @@ const App: React.FC = () => {
 
         {/* Toast Notifications */}
         <ToastContainer toasts={toast.toasts} onClose={toast.removeToast} />
+
+        {/* 版本更新公告：多维度K线图 */}
+        <AnnouncementModal isOpen={showAnnouncement} onClose={handleAnnouncementClose} />
       </div>
     </ErrorBoundary>
   );
