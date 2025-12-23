@@ -93,28 +93,33 @@ const MultiDimensionKLineChart: React.FC<MultiDimensionKLineChartProps> = ({
     },
   ];
 
-  // 基于总分与每年 score 合成各维度的年度曲线（不是严格命理，只是可视化拆分）
+  // 基于「整体K线年度分数 + 各维度总评」合成各维度年度曲线（仅做趋势拆分，可视化用）
   const chartData = useMemo(() => {
     if (!data.length) return [];
-    const avgScore =
-      data.reduce((sum, p) => sum + (p.score ?? 0), 0) / Math.max(data.length, 1);
 
-      return data.map((point) => {
-        const base = point.score ?? (avgScore || 50);
+    const avgScore =
+      data.reduce((sum, p) => sum + (p.score ?? 0), 0) / Math.max(data.length, 1) || 50;
+
+    return data.map((point) => {
+      const overallYearScore = point.score ?? avgScore; // 当前年份整体分
       const result: any = {
         age: point.age,
         year: point.year,
       };
 
       dimensions.forEach((dim) => {
-        const target = dim.overallScore || 50;
-        const factor = avgScore > 0 ? target / avgScore : 1;
+        const dimTarget = dim.overallScore || 50; // 该维度的长期目标分（0-100）
 
-        // 简单的年度扰动，让不同维度的线条略有差异（使用年份和 key 生成可重复的偏移）
-        const seed = (point.year + dim.key.length * 7) % 9; // -8 ~ +8
-        const variation = (seed - 4) * 2;
+        // 1）先把整体年度分向该维度目标分「拉近」一些
+        //   - alpha 控制整体走势的保留程度（0.7：更贴近整体K线）
+        const alpha = 0.7;
+        const blended = overallYearScore * alpha + dimTarget * (1 - alpha);
 
-        const raw = base * factor + variation;
+        // 2）根据年份和维度 key 生成一个稳定的轻微扰动（保证不同维度线条不完全重合）
+        const seed = (point.year * 13 + dim.key.length * 17) % 11; // 0-10
+        const variation = (seed - 5) * 0.8; // -4 ~ +4 分的小波动
+
+        const raw = blended + variation;
         const clamped = Math.max(0, Math.min(100, raw));
         result[dim.key] = Number(clamped.toFixed(1));
       });
